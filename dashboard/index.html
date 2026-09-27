@@ -1,0 +1,1199 @@
+<title>Urbby Insights</title>
+<meta name="description" content="Dashboard de rendimiento de cuentas TikTok con la identidad visual de Urbby.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:ital,wght@0,600;0,700;0,800;1,800&family=Fira+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  color-scheme: dark;
+  --navy-950:#030b33; --navy-900:#061550; --navy-800:#0a1c5e; --navy-700:#0a2073;
+  --blue-600:#1c47bc; --blue-500:#3068e6; --blue-300:#5a8cff; --blue-100:#c3ccef;
+  --muted:#98a3d6; --ink:#ffffff; --ink-2:#dfe5ff;
+  --yellow:#ffd02e; --yellow-deep:#f4be16; --cyan:#57d6ff;
+  --good:#3ddc97; --warn:#ffb547; --bad:#e5484d;
+  --acc-urbby:#ffd02e; --acc-office:#3ddc97; --acc-ronald:#5a8cff; --acc-some:#ff8a5b;
+  --surface: rgba(8,24,86,.78);
+  --surface-2: rgba(6,21,80,.92);
+  --line: rgba(122,160,255,.22);
+  --line-strong: rgba(160,190,255,.42);
+  --r-card: 28px; --r-pill: 999px;
+  --display: "Fira Sans Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+  --body: "Fira Sans", "Segoe UI", system-ui, sans-serif;
+  --shadow: 0 18px 40px -18px rgba(1,6,30,.85), inset 0 1px 0 rgba(255,255,255,.06);
+  --ease-pop: cubic-bezier(.34,1.56,.64,1);
+  --ease-out: cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box}
+html,body{background:var(--navy-900)}
+body{
+  margin:0; color:var(--ink); font-family:var(--body); font-size:15px; line-height:1.5;
+  padding-inline:16px; padding-block:0 64px; overflow-x:hidden; min-height:100%;
+  -webkit-font-smoothing:antialiased;
+}
+button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:3px;border-radius:12px}
+
+/* ---------- Brand background: diagonal pills + yellow arcs ---------- */
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;
+  background:radial-gradient(120% 80% at 70% 20%, #1a3fb0 0%, #0b2280 38%, var(--navy-900) 75%)}
+.bg-rot{position:absolute;left:50%;top:50%;width:260vmax;height:260vmax;transform:translate(-50%,-50%) rotate(-24deg)}
+.pill{position:absolute;border-radius:999px;
+  background:linear-gradient(180deg,rgba(48,104,230,.55),rgba(28,71,188,.35));
+  box-shadow: inset 0 -18px 30px rgba(3,11,51,.45), inset 0 10px 18px rgba(120,160,255,.18), 0 30px 60px -30px rgba(3,11,51,.9);
+  animation: drift var(--d,60s) linear infinite;}
+.pill.dark{background:linear-gradient(180deg,rgba(10,28,94,.9),rgba(6,21,80,.7));box-shadow: inset 0 8px 16px rgba(90,140,255,.12)}
+@keyframes drift{from{transform:translateX(0)}to{transform:translateX(var(--dx,-240px))}}
+.arc{position:absolute;border-radius:50%;border:34px solid var(--yellow);border-left-color:transparent;border-bottom-color:transparent;
+  filter:drop-shadow(0 12px 24px rgba(244,190,22,.25));animation:spin 38s linear infinite}
+.arc.a1{width:300px;height:300px;left:-150px;top:-150px;transform:rotate(45deg)}
+.arc.a2{width:260px;height:260px;right:-120px;bottom:-110px;border-top-color:transparent;border-left-color:var(--yellow);animation-direction:reverse}
+@keyframes spin{to{rotate:360deg}}
+.plus{position:absolute;width:26px;height:26px;animation:twinkle 4s ease-in-out infinite}
+.plus::before,.plus::after{content:"";position:absolute;background:var(--yellow);border-radius:4px;box-shadow:0 0 12px rgba(255,208,46,.5)}
+.plus::before{left:10px;top:0;width:7px;height:26px}.plus::after{left:0;top:10px;width:26px;height:7px}
+@keyframes twinkle{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(.7) rotate(45deg);opacity:.6}}
+
+/* ---------- Shell ---------- */
+.wrap{max-width:1240px;margin:0 auto;position:relative}
+.topbar{display:flex;align-items:center;gap:16px;padding-block:20px 8px;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:6px;font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:.04em;white-space:nowrap}
+.brand b{color:var(--yellow);font-weight:800}
+.tabs-scroll{flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}
+.tabs-scroll::-webkit-scrollbar{display:none}
+.tabs{position:relative;display:inline-flex;gap:2px;padding:5px;border-radius:var(--r-pill);background:rgba(3,11,51,.55);border:1px solid var(--line);backdrop-filter:blur(10px)}
+.tab{position:relative;z-index:1;border:0;background:none;padding:10px 16px;border-radius:var(--r-pill);font-weight:600;font-size:14px;color:var(--blue-100);white-space:nowrap;transition:color .3s}
+.tab[aria-selected="true"]{color:var(--navy-900)}
+.tab:hover:not([aria-selected="true"]){color:#fff}
+.tab-ink{position:absolute;z-index:0;top:5px;bottom:5px;left:5px;border-radius:var(--r-pill);background:var(--yellow);
+  box-shadow:0 6px 18px -4px rgba(255,208,46,.6), inset 0 -3px 0 var(--yellow-deep);transition:left .5s var(--ease-pop),width .5s var(--ease-pop)}
+.proto{font-size:12px;color:var(--muted);border:1px dashed var(--line-strong);border-radius:var(--r-pill);padding:4px 10px;white-space:nowrap}
+.avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:14px;background:linear-gradient(135deg,var(--blue-300),var(--blue-600));border:2px solid rgba(255,255,255,.25);transition:transform .4s var(--ease-pop)}
+.avatar:hover{transform:rotate(-12deg) scale(1.08)}
+
+.progress{position:fixed;left:0;top:0;height:4px;width:0;background:linear-gradient(90deg,var(--yellow),#fff4c2);z-index:50;box-shadow:0 0 12px var(--yellow);transition:width 1.6s var(--ease-out),opacity .4s}
+
+/* ---------- Hero ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:end;padding-block:20px 8px}
+.eyebrow{font-size:13px;color:var(--muted);letter-spacing:.02em}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,5.4vw,62px);line-height:.98;margin:.25em 0 .3em;text-wrap:balance;letter-spacing:-.005em}
+h1 .y{color:var(--yellow);display:block}
+.hero-actions{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.sync{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.dot-live{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 0 rgba(61,220,151,.6);animation:ping 2s infinite}
+@keyframes ping{70%{box-shadow:0 0 0 10px rgba(61,220,151,0)}100%{box-shadow:0 0 0 0 rgba(61,220,151,0)}}
+.btn{display:inline-flex;align-items:center;gap:10px;border-radius:var(--r-pill);padding:12px 22px;font-weight:600;border:1px solid var(--line-strong);background:var(--surface-2);transition:transform .3s var(--ease-pop),background .2s,box-shadow .3s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 24px -10px rgba(90,140,255,.7)}
+.btn:active{transform:translateY(1px) scale(.97)}
+.btn-yellow{background:var(--yellow);color:var(--navy-900);border-color:transparent;box-shadow:inset 0 -3px 0 var(--yellow-deep)}
+.btn-yellow:hover{box-shadow:inset 0 -3px 0 var(--yellow-deep),0 12px 26px -10px rgba(255,208,46,.8)}
+.btn svg{width:18px;height:18px}
+.btn.loading svg{animation:spin 0.8s linear infinite}
+
+/* ---------- Mascot + bubble ---------- */
+.buddy{display:flex;align-items:flex-end;gap:14px;margin-top:6px}
+.mascot{width:132px;flex:none;cursor:pointer;animation:float 4.2s ease-in-out infinite;filter:drop-shadow(0 22px 22px rgba(3,11,51,.55));transition:transform .4s var(--ease-pop)}
+.mascot:hover{transform:scale(1.05) rotate(-3deg)}
+.mascot.boing{animation:boing .7s var(--ease-pop), float 4.2s ease-in-out .7s infinite}
+@keyframes float{0%,100%{translate:0 0}50%{translate:0 -10px}}
+@keyframes boing{0%{transform:scale(1,1)}30%{transform:scale(1.18,.82)}55%{transform:scale(.9,1.12)}80%{transform:scale(1.04,.96)}100%{transform:scale(1)}}
+.mascot .face{transition:transform .25s var(--ease-out)}
+.mascot .smile{transition:d .4s var(--ease-pop), opacity .2s}
+.mascot .blink{transform-box:fill-box;transform-origin:center;animation:blink 5s infinite}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+.mascot .scan,.mascot .wow{opacity:0;transition:opacity .2s}
+.mascot.think .smile{opacity:0}.mascot.think .scan{opacity:1}
+.mascot.wowing .smile{opacity:0}.mascot.wowing .wow{opacity:1}
+.mascot .scan-dot{animation:scan 1s ease-in-out infinite alternate}
+@keyframes scan{from{transform:translateX(-26px)}to{transform:translateX(26px)}}
+.bubble{position:relative;max-width:420px;background:#fff;color:var(--navy-900);border-radius:22px 22px 22px 6px;padding:14px 18px 12px;font-size:14.5px;line-height:1.45;box-shadow:0 18px 40px -16px rgba(1,6,30,.8);min-height:84px}
+.bubble::after{content:"";position:absolute;left:-9px;bottom:10px;border:10px solid transparent;border-right-color:#fff;border-left:0}
+.bubble-head{display:flex;justify-content:space-between;gap:10px;font-size:11.5px;font-weight:700;color:#1d9e5b;margin-bottom:2px;letter-spacing:.02em}
+.bubble-head span:last-child{color:#6b7896;font-weight:500}
+.bubble .caret{display:inline-block;width:2px;height:1em;background:var(--blue-600);vertical-align:-2px;margin-left:1px;animation:caret .8s steps(1) infinite}
+@keyframes caret{50%{opacity:0}}
+.bubble-nav{display:flex;gap:6px;margin-top:8px}
+.bubble-nav i{width:6px;height:6px;border-radius:9px;background:#c3ccef;transition:width .3s var(--ease-pop),background .3s}
+.bubble-nav i.on{width:18px;background:var(--blue-500)}
+
+/* ---------- Filter row ---------- */
+.filters{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding-block:18px 18px;position:relative;z-index:5}
+.chip{position:relative;display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:var(--r-pill);background:rgba(3,11,51,.62);border:1px solid var(--line);font-size:14px;font-weight:600;backdrop-filter:blur(8px);transition:border-color .2s,transform .3s var(--ease-pop)}
+button.chip:hover{border-color:var(--line-strong);transform:translateY(-1px)}
+.chip svg{width:16px;height:16px;flex:none}
+.chip .ic-y{color:var(--yellow)}
+.chip select{appearance:none;background:none;border:0;font-weight:600;padding-right:18px;cursor:pointer}
+.chip select option{background:var(--navy-900)}
+.chip .chev{position:absolute;right:14px;pointer-events:none;width:12px;height:12px}
+.ring{width:26px;height:26px;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:4}
+.ring .trk{stroke:rgba(255,255,255,.14)}
+.ring .val{stroke:var(--yellow);stroke-linecap:round;transition:stroke-dashoffset 1.2s var(--ease-out)}
+.chip-meta b{font-family:var(--display);font-size:17px;color:var(--yellow)}
+.spacer{flex:1}
+.pop{position:absolute;top:calc(100% + 10px);left:0;min-width:270px;background:var(--surface-2);border:1px solid var(--line-strong);border-radius:22px;padding:14px;box-shadow:0 30px 60px -20px rgba(1,6,30,.95);z-index:30;
+  transform-origin:top left;animation:popin .35s var(--ease-pop)}
+@keyframes popin{from{opacity:0;transform:scale(.85) translateY(-6px)}}
+.pop h4{margin:0 0 8px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.acc-opt{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:14px;cursor:pointer;font-weight:500}
+.acc-opt:hover{background:rgba(90,140,255,.12)}
+.acc-opt input{appearance:none;width:20px;height:20px;border-radius:7px;border:2px solid var(--line-strong);display:grid;place-items:center;margin:0;transition:background .2s}
+.acc-opt input:checked{background:var(--c);border-color:var(--c)}
+.acc-opt input:checked::after{content:"";width:9px;height:5px;border:2.5px solid var(--navy-900);border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+.acc-opt small{margin-left:auto;color:var(--muted);font-variant-numeric:tabular-nums}
+.range-row{display:flex;flex-direction:column;gap:8px}
+.range-val{font-family:var(--display);font-size:30px;font-weight:800;color:var(--yellow);line-height:1}
+input[type=range]{appearance:none;width:100%;height:10px;border-radius:9px;background:linear-gradient(90deg,var(--yellow) var(--p,40%),rgba(255,255,255,.12) var(--p,40%));outline-offset:6px}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;border-radius:50%;background:#fff;border:5px solid var(--yellow);box-shadow:0 4px 12px rgba(0,0,0,.4);cursor:grab;transition:transform .2s var(--ease-pop)}
+input[type=range]::-webkit-slider-thumb:active{transform:scale(1.2)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:5px solid var(--yellow)}
+.hint{font-size:12.5px;color:var(--muted);line-height:1.45}
+
+/* ---------- Cards ---------- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-card);box-shadow:var(--shadow);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:22px;position:relative}
+.card-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.card-h h3{margin:0;font-family:var(--display);font-size:19px;font-weight:700;letter-spacing:.01em}
+.card-h .sub{font-size:12.5px;color:var(--muted)}
+.note{font-size:13px;color:var(--muted);margin:12px 0 0;max-width:75ch}
+.grid{display:grid;gap:18px}
+.g-kpi{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g-matrix{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr)}
+.section-gap{margin-top:18px}
+
+.kpi{padding:20px 22px;display:flex;flex-direction:column;gap:6px;transition:transform .5s var(--ease-pop),border-color .3s,box-shadow .3s;transform-style:preserve-3d;will-change:transform;min-height:170px}
+.kpi:hover{border-color:var(--line-strong);box-shadow:var(--shadow),0 24px 50px -24px rgba(90,140,255,.6)}
+.kpi-top{display:flex;align-items:center;gap:12px}
+.app-ic{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;flex:none;background:linear-gradient(160deg,#4d7df0,var(--blue-600));box-shadow:inset 0 -4px 0 rgba(3,11,51,.35),inset 0 2px 0 rgba(255,255,255,.25),0 8px 16px -8px rgba(3,11,51,.9)}
+.app-ic.y{background:linear-gradient(160deg,#ffe16b,var(--yellow-deep));color:var(--navy-900)}
+.app-ic svg{width:20px;height:20px}
+.kpi-label{font-size:13.5px;font-weight:600;color:var(--blue-100)}
+.kpi-val{font-family:var(--display);font-weight:800;font-size:44px;line-height:1;margin-top:8px;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.kpi-val.muted{color:var(--muted)}
+.kpi-sub{font-size:13px;color:var(--muted)}
+.tag{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:var(--r-pill);letter-spacing:.02em;white-space:nowrap;margin-left:auto}
+.tag.y{background:rgba(255,208,46,.16);color:var(--yellow)}
+.tag.w{background:rgba(255,181,71,.15);color:var(--warn)}
+.tag.g{background:rgba(61,220,151,.14);color:var(--good)}
+.tag.b{background:rgba(90,140,255,.18);color:#a9c2ff}
+.tag i{width:6px;height:6px;border-radius:50%;background:currentColor}
+.kpi .spark{margin-top:auto;height:38px;width:100%}
+
+.callout{display:flex;gap:14px;align-items:flex-start;padding:16px 20px;border-radius:22px;background:linear-gradient(90deg,rgba(48,104,230,.35),rgba(10,28,94,.6));border:1px solid var(--line);margin-top:18px}
+.callout .mini{width:44px;flex:none;animation:float 3.6s ease-in-out infinite}
+.callout p{margin:0;color:var(--ink-2);max-width:95ch}
+.callout strong{color:var(--yellow);font-weight:700}
+
+/* charts */
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%;overflow:visible}
+.axis text,.chart text{fill:var(--muted);font-size:11.5px;font-family:var(--body)}
+.gridline{stroke:rgba(160,190,255,.12);stroke-width:1}
+.tip{position:absolute;pointer-events:none;background:#fff;color:var(--navy-900);border-radius:14px;padding:8px 12px;font-size:12.5px;line-height:1.35;box-shadow:0 14px 30px -12px rgba(1,6,30,.9);transform:translate(-50%,calc(-100% - 14px));opacity:0;transition:opacity .15s;white-space:nowrap;z-index:4}
+.tip b{font-family:var(--display);font-size:18px;display:block}
+.tip.on{opacity:1}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--blue-100)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.legend .dash{width:18px;height:0;border-top:2px dashed var(--blue-100);border-radius:0}
+
+.hbar{display:grid;grid-template-columns:110px minmax(0,1fr) 74px;align-items:center;gap:12px;padding:7px 0;cursor:pointer;border-radius:14px}
+.hbar-name{font-size:13.5px;font-weight:600;text-align:right;color:var(--blue-100);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hbar-track{height:34px;border-radius:12px;background:rgba(3,11,51,.5);overflow:hidden;position:relative}
+.hbar-fill{height:100%;width:0;border-radius:12px;transition:width 1.1s var(--ease-pop),opacity .3s;box-shadow:inset 0 -4px 0 rgba(0,0,0,.18),inset 0 2px 0 rgba(255,255,255,.3)}
+.hbar-val{font-family:var(--display);font-weight:700;font-size:17px;font-variant-numeric:tabular-nums}
+.hbar.dim .hbar-fill{opacity:.25}.hbar.dim .hbar-name,.hbar.dim .hbar-val{opacity:.45}
+.hbar:hover .hbar-track{outline:2px solid var(--line-strong)}
+
+/* table */
+.tbl-wrap{overflow-x:auto;border-radius:18px;border:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th,td{padding:12px 10px;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{font-size:12px;font-weight:600;color:var(--muted);background:rgba(3,11,51,.55);letter-spacing:.03em;cursor:pointer;user-select:none}
+th:hover{color:#fff}
+th .ar{display:inline-block;margin-left:4px;transition:transform .3s;opacity:.4}
+th.sorted .ar{opacity:1;color:var(--yellow)}
+th.sorted.asc .ar{transform:rotate(180deg)}
+tbody tr{border-top:1px solid var(--line);transition:background .2s}
+tbody tr:hover{background:rgba(90,140,255,.1)}
+td .who{display:inline-flex;align-items:center;gap:8px;font-weight:600}
+td .who i{width:10px;height:10px;border-radius:50%;background:var(--c)}
+.rate-bar{display:inline-block;height:6px;border-radius:6px;background:var(--blue-300);vertical-align:middle;margin-right:8px}
+
+/* locked quality */
+.locks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:6px}
+.lock{border:1.5px dashed var(--line-strong);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden}
+.lock .lk{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;background:rgba(255,255,255,.07)}
+.lock .lk svg{width:16px;height:16px;color:var(--muted)}
+.lock b{font-family:var(--display);font-size:26px;color:var(--muted)}
+.lock span{font-size:13px;color:var(--blue-100)}
+.lock::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.06) 50%,transparent 70%);transform:translateX(-100%);animation:shimmer 3.5s infinite}
+@keyframes shimmer{to{transform:translateX(100%)}}
+
+/* panels */
+.panel{animation:panelIn .55s var(--ease-out)}
+@keyframes panelIn{from{opacity:0;transform:translateY(18px)}}
+.reveal{animation:rise .7s var(--ease-out) both;animation-delay:calc(var(--i,0)*70ms)}
+@keyframes rise{from{opacity:.001;transform:translateY(22px) scale(.98)}}
+
+/* podium */
+.podium{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;align-items:end}
+.pod{border-radius:24px 24px 14px 14px;padding:18px 16px;background:linear-gradient(180deg,rgba(48,104,230,.5),rgba(10,28,94,.8));border:1px solid var(--line);text-align:center;cursor:pointer;transition:transform .4s var(--ease-pop),border-color .3s;position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:4px}
+.pod:hover,.pod.on{transform:translateY(-8px);border-color:var(--yellow)}
+.pod .rank{font-family:var(--display);font-weight:800;font-size:56px;line-height:.9;color:rgba(255,255,255,.18)}
+.pod.first .rank{color:var(--yellow)}
+.pod .nm{font-weight:700}
+.pod .v{font-family:var(--display);font-size:26px;font-weight:800;font-variant-numeric:tabular-nums}
+.pod .s{font-size:12px;color:var(--muted)}
+.pod .mascot-sm{width:92px;margin:0 auto -4px;animation:float 3s ease-in-out infinite}
+.crown{display:block;margin:0 auto -10px;width:40px;height:26px;color:var(--yellow);filter:drop-shadow(0 4px 8px rgba(255,208,46,.5));animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-4px) rotate(-6deg)}}
+.why{display:grid;grid-template-columns:auto minmax(0,1fr);gap:18px;align-items:center}
+.why ul{margin:6px 0 0;padding-left:18px;color:var(--ink-2)}
+.why li{margin:4px 0}
+
+/* versus */
+.vs-head{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:14px;align-items:center;margin-bottom:12px}
+.vs-badge{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:22px;background:var(--yellow);color:var(--navy-900);box-shadow:0 0 0 6px rgba(255,208,46,.2);animation:pulse 2s infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 14px rgba(255,208,46,0)}}
+.vs-row{display:grid;grid-template-columns:minmax(0,1fr) 130px minmax(0,1fr);gap:12px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.vs-row .lbl{text-align:center;font-size:12.5px;color:var(--muted);font-weight:600}
+.vs-side{display:flex;align-items:center;gap:10px}
+.vs-side.l{flex-direction:row-reverse}
+.vs-bar{height:26px;border-radius:9px;transition:width .9s var(--ease-pop);min-width:4px}
+.vs-num{font-family:var(--display);font-weight:700;font-size:17px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.vs-side .star{color:var(--yellow);font-size:15px;opacity:0;transform:scale(0);transition:all .4s var(--ease-pop)}
+.vs-side.win .star{opacity:1;transform:scale(1)}
+
+/* composer */
+.composer{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;align-items:start}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:13px;font-weight:600;color:var(--blue-100)}
+.inp{background:rgba(3,11,51,.6);border:1px solid var(--line);border-radius:16px;padding:12px 14px;transition:border-color .2s,box-shadow .2s;width:100%}
+.inp:focus{outline:none;border-color:var(--yellow);box-shadow:0 0 0 4px rgba(255,208,46,.18)}
+textarea.inp{min-height:130px;resize:vertical;line-height:1.5}
+select.inp option{background:var(--navy-900)}
+.checks{display:flex;flex-direction:column;gap:8px;margin:4px 0 16px}
+.ck{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--blue-100);transition:color .3s}
+.ck i{width:22px;height:22px;border-radius:50%;border:2px solid var(--line-strong);display:grid;place-items:center;transition:all .35s var(--ease-pop);flex:none}
+.ck.ok{color:#fff}
+.ck.ok i{background:var(--good);border-color:var(--good);transform:scale(1.1)}
+.ck.ok i::after{content:"";width:8px;height:4px;border:2.5px solid var(--navy-900);border-top:0;border-right:0;transform:rotate(-45deg) translate(1px,-1px)}
+.counter{font-size:12px;color:var(--muted);text-align:right}
+.phone{width:100%;max-width:300px;aspect-ratio:9/18.5;border-radius:44px;background:#0b0b10;padding:10px;box-shadow:0 0 0 2px #2a2f45,0 40px 80px -30px rgba(1,6,30,1);position:relative;margin:0 auto;transform:rotate(2deg);transition:transform .6s var(--ease-pop)}
+.phone:hover{transform:rotate(0) scale(1.02)}
+.screen{position:relative;width:100%;height:100%;border-radius:36px;overflow:hidden;background:radial-gradient(120% 70% at 30% 20%,#2b5ee0,#0a1c5e 70%)}
+.screen .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:90px;height:24px;border-radius:14px;background:#000;z-index:3}
+.screen .pills-in{position:absolute;inset:-40%;transform:rotate(-24deg)}
+.screen .pills-in span{position:absolute;height:70px;border-radius:40px;background:rgba(48,104,230,.55);box-shadow:inset 0 -10px 16px rgba(3,11,51,.4);animation:drift 12s linear infinite;--dx:-120px}
+.cover{position:absolute;left:16px;right:60px;top:84px;font-family:var(--display);font-weight:800;font-size:26px;line-height:1.02;text-wrap:balance;z-index:2;text-shadow:0 4px 18px rgba(3,11,51,.7)}
+.cover .y{color:var(--yellow)}
+.screen .mascot-sm{position:absolute;width:120px;left:50%;top:48%;transform:translateX(-50%);z-index:2;animation:dance 1.2s ease-in-out infinite}
+@keyframes dance{0%,100%{transform:translateX(-50%) rotate(-6deg)}50%{transform:translateX(-50%) rotate(6deg) translateY(-8px)}}
+.rail{position:absolute;right:10px;bottom:120px;display:flex;flex-direction:column;gap:16px;align-items:center;z-index:2;font-size:11px;font-weight:600}
+.rail div{display:flex;flex-direction:column;align-items:center;gap:2px}
+.rail svg{width:28px;height:28px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5))}
+.rail .heart{transition:transform .3s var(--ease-pop);cursor:pointer}
+.rail .heart.liked{color:#ff3b5c;transform:scale(1.25)}
+.cap{position:absolute;left:14px;right:60px;bottom:26px;z-index:2;font-size:12.5px;line-height:1.35;text-shadow:0 1px 4px rgba(0,0,0,.7);max-height:120px;overflow:hidden;word-wrap:break-word}
+.cap b{display:block;margin-bottom:3px;font-size:13.5px}
+.cap .ht{color:var(--yellow);font-weight:600}
+
+/* settings */
+.set-row{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:14px 0;border-top:1px solid var(--line);flex-wrap:wrap}
+.set-row:first-of-type{border-top:0}
+.set-row h5{margin:0;font-size:15px}
+.set-row p{margin:2px 0 0;font-size:13px;color:var(--muted);max-width:60ch}
+.switch{width:52px;height:30px;border-radius:30px;background:rgba(255,255,255,.15);border:0;position:relative;transition:background .3s;flex:none}
+.switch::after{content:"";position:absolute;left:4px;top:4px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .4s var(--ease-pop)}
+.switch[aria-checked="true"]{background:var(--yellow)}
+.switch[aria-checked="true"]::after{transform:translateX(22px)}
+
+/* toast */
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,140%);z-index:60;display:flex;align-items:center;gap:12px;background:var(--surface-2);border:1px solid rgba(61,220,151,.5);padding:12px 20px 12px 14px;border-radius:var(--r-pill);box-shadow:0 20px 50px -16px rgba(1,6,30,1);transition:transform .5s var(--ease-pop);max-width:calc(100% - 32px);font-weight:500}
+.toast.on{transform:translate(-50%,0)}
+.toast .tk{width:28px;height:28px;border-radius:50%;background:var(--good);display:grid;place-items:center;color:var(--navy-900);flex:none}
+.toast .tk svg{width:16px;height:16px}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:70}
+
+.foot{margin-top:28px;font-size:12.5px;color:var(--muted);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.foot b{font-family:var(--display);letter-spacing:.06em;color:#fff}
+.foot b span{color:var(--yellow)}
+
+/* responsive */
+@media (max-width:980px){
+  .g-kpi{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .g-matrix,.g-2{grid-template-columns:minmax(0,1fr)}
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .hero-actions{align-items:flex-start;flex-direction:row;flex-wrap:wrap}
+  .composer{grid-template-columns:minmax(0,1fr)}
+  .podium{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:620px){
+  .g-kpi{grid-template-columns:minmax(0,1fr)}
+  .locks{grid-template-columns:minmax(0,1fr)}
+  .kpi{min-height:0}
+  .buddy{flex-direction:column;align-items:flex-start}
+  .mascot{width:100px}
+  .bubble{border-radius:6px 22px 22px 22px}
+  .bubble::after{left:22px;top:-9px;bottom:auto;border:10px solid transparent;border-bottom-color:#fff;border-top:0}
+  .hbar{grid-template-columns:84px minmax(0,1fr) 62px;gap:8px}
+  .vs-row{grid-template-columns:minmax(0,1fr) 78px minmax(0,1fr)}
+  .card{padding:18px}
+  .why{grid-template-columns:minmax(0,1fr)}
+}
+.calm *,.calm *::before,.calm *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
+}
+</style>
+
+<div class="bg" aria-hidden="true">
+  <div class="bg-rot" id="bgPills"></div>
+  <div class="arc a1"></div><div class="arc a2"></div>
+  <div class="plus" style="left:8%;top:62%"></div>
+  <div class="plus" style="right:12%;top:18%;animation-delay:-1.5s"></div>
+  <div class="plus" style="left:46%;bottom:6%;animation-delay:-3s;transform:scale(.7)"></div>
+</div>
+<div class="progress" id="progress"></div>
+<canvas id="confetti"></canvas>
+
+<div class="wrap">
+  <header class="topbar">
+    <div class="brand" aria-label="Urbby Insights">URBBY <b>INSIGHTS</b></div>
+    <div class="tabs-scroll">
+      <div class="tabs" role="tablist" id="tabs">
+        <span class="tab-ink" id="tabInk"></span>
+        <button class="tab" role="tab" aria-selected="true" data-tab="resumen" id="tab-resumen">Resumen</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="ganadores" id="tab-ganadores">Ganadores para escalar</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="comparativo" id="tab-comparativo">Comparativo</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="nueva" id="tab-nueva">Nueva publicación</button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="config" id="tab-config">Configuración</button>
+      </div>
+    </div>
+    <div class="avatar" aria-label="Ronald G.">RG</div>
+  </header>
+
+  <!-- ================= RESUMEN ================= -->
+  <main id="panel-resumen" class="panel" role="tabpanel">
+    <section class="hero">
+      <div>
+        <div class="eyebrow" id="eyebrow">Cuentas seleccionadas · 01/09/2026 – 27/09/2026 · métricas con su contexto</div>
+        <h1>Más publicaciones,<span class="y">calidad por confirmar.</span></h1>
+        <div class="buddy">
+          <div class="mascot" id="mascot" role="button" tabindex="0" aria-label="Urbby: siguiente consejo"></div>
+          <div class="bubble" aria-live="polite">
+            <div class="bubble-head"><span>Urbby AI · lectura del periodo</span><span id="tipCount">1/6</span></div>
+            <div id="tipText"></div>
+            <div class="bubble-nav" id="tipDots"></div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-actions">
+        <span class="proto" title="Cifras tomadas de la captura del dashboard del 27/09/2026">Prototipo · datos del 27/09</span>
+        <div class="sync"><span class="dot-live"></span><span id="syncLabel">Datos sincronizados hace menos de 1 min</span></div>
+        <button class="btn btn-yellow" id="refresh">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg>
+          <span>Actualizar datos</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="filters" aria-label="Filtros">
+      <label class="chip"><svg class="ic-y" viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 1 1-1.8-2.5V9.7a5.8 5.8 0 1 0 4.9 5.7V9.1a7.4 7.4 0 0 0 4.3 1.4V7.4a4.3 4.3 0 0 1-3.2-1.6z"/></svg>
+        <select id="network" aria-label="Red"><option>Todas las redes</option><option>TikTok</option></select>
+        <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l4 4 4-4"/></svg>
+      </label>
+      <div style="position:relative">
+        <button class="chip" id="accBtn" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M7 12h10M10 18h4"/></svg><span id="accLabel">4 cuentas</span></button>
+        <div class="pop" id="accPop" hidden>
+          <h4>Cuentas</h4>
+          <div id="accList"></div>
+        </div>
+      </div>
+      <div style="position:relative">
+        <button class="chip" id="goalBtn" aria-expanded="false"><svg class="ic-y" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3h2v18H5zM8 4h11l-2.5 4L19 12H8z"/></svg>Configurar meta</button>
+        <div class="pop" id="goalPop" hidden>
+          <h4>Meta mensual de vistas</h4>
+          <div class="range-row">
+            <div class="range-val" id="goalVal">500,000</div>
+            <input type="range" id="goal" min="100000" max="1000000" step="10000" value="500000" aria-label="Meta mensual de vistas">
+            <p class="hint">Vistas actuales de los videos publicados en el mes. La línea diaria del gráfico se mueve contigo.</p>
+          </div>
+        </div>
+      </div>
+      <div class="chip chip-meta" title="Vistas actuales ÷ meta mensual">
+        <svg class="ring" viewBox="0 0 30 30"><circle class="trk" cx="15" cy="15" r="12"/><circle class="val" id="ringVal" cx="15" cy="15" r="12" stroke-dasharray="75.4" stroke-dashoffset="75.4"/></svg>
+        Meta cohorte <b id="metaPct">0%</b>
+      </div>
+      <span class="spacer"></span>
+      <label class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="5" width="18" height="16" rx="4"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        <select id="month" aria-label="Mes"><option>Septiembre 2026</option><option>Agosto 2026</option><option>Julio 2026</option></select>
+        <svg class="chev" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4l4 4 4-4"/></svg>
+      </label>
+    </section>
+
+    <section class="grid g-kpi" id="kpis"></section>
+
+    <div class="callout reveal" style="--i:6">
+      <div class="mini" data-mascot="mini"></div>
+      <p id="insight"></p>
+    </div>
+
+    <section class="card section-gap reveal" style="--i:7">
+      <div class="card-h">
+        <h3>Vistas consolidadas por fecha de publicación</h3>
+        <div class="legend"><span><i style="--c:var(--yellow)"></i>Promedio móvil 7 días</span><span><i class="dash"></i><span id="goalLegend">Meta diaria 16,667</span></span></div>
+      </div>
+      <div class="chart" id="dailyChart"><div class="tip" id="dailyTip"></div></div>
+      <p class="note">La curva agrupa vistas acumuladas de videos según su fecha de publicación. No son las vistas obtenidas en cada fecha: los videos recientes han tenido menos tiempo para acumular. <span id="dailyEst"></span></p>
+    </section>
+
+    <section class="grid g-2 section-gap">
+      <div class="card reveal" style="--i:8">
+        <div class="card-h"><h3>Vistas por cuenta</h3><span class="sub">Vistas acumuladas de los videos del periodo · clic para filtrar</span></div>
+        <div id="barsViews"></div>
+      </div>
+      <div class="card reveal" style="--i:9">
+        <div class="card-h"><h3>Tasa de interacción por cuenta</h3><span class="sub">Interacciones ÷ vistas</span></div>
+        <div id="barsEng"></div>
+      </div>
+    </section>
+
+    <section class="grid g-2 section-gap">
+      <div class="card reveal" style="--i:10">
+        <div class="card-h"><h3>Seis meses de publicaciones</h3><span class="sub">Vistas actuales por mes de publicación</span></div>
+        <div class="chart" id="monthsChart"><div class="tip" id="monthsTip"></div></div>
+        <p class="note">Las cohortes antiguas llevan más tiempo acumulando vistas. Compará también la cantidad de videos.</p>
+      </div>
+      <div class="card reveal" style="--i:11">
+        <div class="card-h"><h3>Seis meses de seguidores</h3><span class="sub">Cambio neto reportado por Metricool</span></div>
+        <div class="chart" id="followChart"><div class="tip" id="followTip"></div></div>
+        <p class="note">Los meses sin datos quedan vacíos. No equivalen a cero.</p>
+      </div>
+    </section>
+
+    <section class="grid g-matrix section-gap">
+      <div class="card reveal" style="--i:12">
+        <div class="card-h"><h3>Matriz de cuentas</h3><span class="sub">Tamaño = videos publicados</span></div>
+        <div class="chart" id="matrixChart"><div class="tip" id="matrixTip"></div></div>
+        <p class="note">El eje de vistas por video sigue sesgado por la edad de los videos. D7 será comparable cuando haya cobertura.</p>
+      </div>
+      <div class="card reveal" style="--i:13">
+        <div class="card-h"><h3>Volumen, eficiencia e interacción</h3><span class="sub">Clic en una columna para ordenar</span></div>
+        <div class="tbl-wrap"><table id="accTable"><thead></thead><tbody></tbody></table></div>
+      </div>
+    </section>
+
+    <section class="card section-gap reveal" style="--i:14">
+      <div class="card-h"><h3>Calidad de atención y conversión</h3><span class="sub">Disponibilidad real de métricas</span></div>
+      <div class="locks">
+        <div class="lock"><div class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><b>0/77</b><span>Tiempo promedio visto</span></div>
+        <div class="lock"><div class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><b>0/77</b><span>Alcance por video</span></div>
+        <div class="lock"><div class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><b>0/77</b><span>Origen "Para ti"</span></div>
+      </div>
+      <div class="callout" style="margin-top:14px">
+        <div class="mini" data-mascot="mini-shrug"></div>
+        <p>Metricool no entregó retención para estas cuentas TikTok <strong>personales</strong>. No la infiero a partir de vistas o engagement. Alcance único, frecuencia, visitas al perfil y tasas por 1,000 vistas necesitan datos de cuenta que hoy no están disponibles.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= GANADORES ================= -->
+  <section id="panel-ganadores" class="panel" role="tabpanel" hidden>
+    <div class="hero" style="grid-template-columns:1fr">
+      <div>
+        <div class="eyebrow">Ranking por vistas actuales por video · septiembre 2026</div>
+        <h1>¿A quién le<span class="y">subimos el volumen?</span></h1>
+      </div>
+    </div>
+    <div class="podium section-gap" id="podium"></div>
+    <div class="card section-gap why" id="whyCard"></div>
+  </section>
+
+  <!-- ================= COMPARATIVO ================= -->
+  <section id="panel-comparativo" class="panel" role="tabpanel" hidden>
+    <div class="hero" style="grid-template-columns:1fr">
+      <div>
+        <div class="eyebrow">Cara a cara entre cuentas · mismo periodo</div>
+        <h1>Una cuenta<span class="y">contra otra.</span></h1>
+      </div>
+    </div>
+    <div class="card section-gap">
+      <div class="vs-head">
+        <select class="inp" id="vsA" aria-label="Cuenta A"></select>
+        <div class="vs-badge">VS</div>
+        <select class="inp" id="vsB" aria-label="Cuenta B"></select>
+      </div>
+      <div id="vsRows"></div>
+      <p class="note">Mismo mes de publicación, pero con mezcla distinta de edades de video. La estrella marca el valor mayor, no un veredicto de calidad.</p>
+    </div>
+  </section>
+
+  <!-- ================= NUEVA PUBLICACIÓN ================= -->
+  <section id="panel-nueva" class="panel" role="tabpanel" hidden>
+    <div class="hero" style="grid-template-columns:1fr">
+      <div>
+        <div class="eyebrow">Borrador con vista previa en vivo</div>
+        <h1>Armá el próximo<span class="y">video ganador.</span></h1>
+      </div>
+    </div>
+    <div class="composer section-gap">
+      <div class="card">
+        <div class="field"><label for="cAcc">Cuenta</label><select class="inp" id="cAcc"></select></div>
+        <div class="field"><label for="cCover">Texto de portada</label><input class="inp" id="cCover" maxlength="60" value="Tu negocio, en piloto automático."></div>
+        <div class="field"><label for="cCap">Descripción</label>
+          <textarea class="inp" id="cCap" maxlength="2200">¿Todavía copiás pedidos a mano? Urbby AI responde, cobra y factura por vos. Comentá "PILOTO" y te mando la demo 👇 #emprendedores #ventasonline #whatsappbusiness #automatizacion</textarea>
+          <div class="counter"><span id="capCount">0</span>/2200</div>
+        </div>
+        <div class="checks" id="checks">
+          <div class="ck" data-k="hook"><i></i>Primera frase de 80 caracteres o menos</div>
+          <div class="ck" data-k="tags"><i></i>Entre 3 y 5 hashtags</div>
+          <div class="ck" data-k="cta"><i></i>Llamado a la acción (comentá, escribí, guardá, link…)</div>
+        </div>
+        <button class="btn btn-yellow" id="saveDraft"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7M8 20v-6h8v6"/></svg>Guardar borrador</button>
+        <p class="hint" style="margin-top:10px">El borrador se guarda solo en este navegador. Publicar sigue ocurriendo en Metricool.</p>
+      </div>
+      <div>
+        <div class="phone" aria-label="Vista previa del video">
+          <div class="screen">
+            <div class="notch"></div>
+            <div class="pills-in" id="phonePills"></div>
+            <div class="cover" id="pvCover"></div>
+            <div class="mascot-sm" data-mascot="dance"></div>
+            <div class="rail">
+              <div><svg class="heart" id="pvHeart" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3.2 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.8 0 6.1 3.9 4.6 7.3C19.5 16.4 12 21 12 21z"/></svg><span id="pvLikes">0</span></div>
+              <div><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.5 3 2 6.8 2 11.5c0 2.6 1.4 4.9 3.6 6.5L5 22l4.3-2.4c.9.2 1.8.4 2.7.4 5.5 0 10-3.8 10-8.5S17.5 3 12 3z"/></svg><span>—</span></div>
+              <div><svg viewBox="0 0 24 24" fill="currentColor"><path d="M14 4l8 7.5-8 7.5v-4.5C8 14.5 4.5 16.5 2 20c1-5.5 4-10.5 12-11.5z"/></svg><span>—</span></div>
+            </div>
+            <div class="cap" id="pvCap"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CONFIGURACIÓN ================= -->
+  <section id="panel-config" class="panel" role="tabpanel" hidden>
+    <div class="hero" style="grid-template-columns:1fr">
+      <div>
+        <div class="eyebrow">Preferencias del dashboard</div>
+        <h1>Tu tablero,<span class="y">a tu manera.</span></h1>
+      </div>
+    </div>
+    <div class="card section-gap">
+      <div class="set-row">
+        <div><h5>Meta mensual de vistas</h5><p>Se usa para la meta cohorte y la línea de referencia diaria.</p></div>
+        <div style="min-width:min(320px,100%);flex:1;max-width:420px" class="range-row">
+          <div class="range-val" id="goalVal2">500,000</div>
+          <input type="range" id="goal2" min="100000" max="1000000" step="10000" value="500000" aria-label="Meta mensual de vistas">
+        </div>
+      </div>
+      <div class="set-row">
+        <div><h5>Animaciones</h5><p>Mascota, fondo en movimiento y confeti. Apagalas si preferís una vista quieta.</p></div>
+        <button class="switch" role="switch" aria-checked="true" id="animSwitch" aria-label="Animaciones"></button>
+      </div>
+      <div class="set-row">
+        <div><h5>Fuente de datos</h5><p>Metricool · 4 cuentas TikTok personales. La retención y el alcance no vienen en este tipo de cuenta.</p></div>
+        <span class="tag g"><i></i>Conectado</span>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <b>URBBY <span>ECOSISTEMA</span></b>
+    <span>Curvas diarias y mensuales leídas de la captura: valores aproximados salvo los totales.</span>
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status"><span class="tk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M5 12l5 5 9-10"/></svg></span><span id="toastText"></span></div>
+
+<script>
+(() => {
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const fmt = n => Math.round(n).toLocaleString('en-US');
+const pct = (n, d=1) => (n*100).toFixed(d) + '%';
+const kfmt = n => n >= 1000 ? (n/1000).toFixed(n>=10000?0:1).replace('.0','') + 'k' : String(Math.round(n));
+let calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NS = 'http://www.w3.org/2000/svg';
+
+/* ---------------- Data (dashboard capture, 27/09/2026) ---------------- */
+const ACCOUNTS = [
+  { id:'urbby',  name:'Urbby',        handle:'urbby',       videos:10, views:378822, inter:16758, color:'var(--acc-urbby)',  hex:'#ffd02e' },
+  { id:'office', name:'Urbby Office', handle:'urbbyoffice', videos:60, views:107712, inter:3934,  color:'var(--acc-office)', hex:'#3ddc97' },
+  { id:'ronald', name:'Ronald MUCH',  handle:'ronaldmuch',  videos:4,  views:35418,  inter:2424,  color:'var(--acc-ronald)', hex:'#5a8cff' },
+  { id:'some',   name:'somehuck',     handle:'somehuck',    videos:3,  views:8799,   inter:325,   color:'var(--acc-some)',   hex:'#ff8a5b' },
+];
+const TOTAL_VIEWS = ACCOUNTS.reduce((a,b)=>a+b.views,0);
+const ALL = { prevVideos:8, d7:1860, d7cov:[15,52], maturing:25, followers:6990 };
+const DAILY = [800,2000,2000,6000,10400,10600,14500,16700,17300,17800,13500,9700,10800,8200,5800,6400,6100,6300,6400,5900,6400,7000,35500,46000,46500,49700,49000];
+const MONTHS = [['Abr',28000],['May',385000],['Jun',18000],['Jul',29000],['Ago',80000],['Sep',530751]];
+const FOLLOW = [['Abr',null],['May',null],['Jun',null],['Jul',null],['Ago',null],['Sep',6990]];
+
+const state = { sel:new Set(ACCOUNTS.map(a=>a.id)), goal:500000, sort:{k:'views',dir:-1}, firstRun:true };
+try { const g = +localStorage.getItem('urbby.goal'); if (g >= 100000 && g <= 1000000) state.goal = g; } catch(e){}
+try { if (localStorage.getItem('urbby.calm') === '1') { calm = true; document.documentElement.classList.add('calm'); } } catch(e){}
+
+const selected = () => ACCOUNTS.filter(a => state.sel.has(a.id));
+function totals(){
+  const s = selected();
+  const videos = s.reduce((a,b)=>a+b.videos,0), views = s.reduce((a,b)=>a+b.views,0), inter = s.reduce((a,b)=>a+b.inter,0);
+  return { videos, views, inter, vpv: videos? views/videos : 0, eng: views? inter/views : 0, all: s.length === ACCOUNTS.length, n:s.length };
+}
+
+/* ---------------- Mascot ---------------- */
+let mUid = 0;
+function mascotSVG(kind='main'){
+  const u = 'm' + (mUid++);
+  const smile = kind === 'shrug' ? 'M78 96 L122 96' : 'M76 90 Q100 106 124 90';
+  return `<svg viewBox="0 0 200 190" aria-hidden="true">
+  <defs>
+    <radialGradient id="${u}b" cx="36%" cy="28%" r="80%"><stop offset="0" stop-color="#8fb2ff"/><stop offset=".35" stop-color="#3f78f0"/><stop offset=".75" stop-color="#1c47bc"/><stop offset="1" stop-color="#0a2073"/></radialGradient>
+    <linearGradient id="${u}v" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#101a44"/><stop offset="1" stop-color="#02061f"/></linearGradient>
+    <linearGradient id="${u}r" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a1c5e"/><stop offset="1" stop-color="#2d5fe0"/></linearGradient>
+    <clipPath id="${u}c"><rect x="46" y="68" width="108" height="46" rx="23"/></clipPath>
+    <filter id="${u}g" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <ellipse cx="100" cy="180" rx="52" ry="7" fill="#02061f" opacity=".35"/>
+  <path d="M46 112 C22 116 12 138 24 160 C30 150 40 140 58 134Z" fill="url(#${u}b)"/>
+  <path d="M154 112 C178 110 192 124 186 146 C180 136 168 132 150 136Z" fill="url(#${u}b)"/>
+  <path d="M30 112 C30 52 68 18 100 18 C132 18 170 52 170 112 C170 146 140 166 100 166 C60 166 30 146 30 112Z" fill="url(#${u}b)"/>
+  <ellipse cx="72" cy="42" rx="24" ry="11" fill="#fff" opacity=".35" transform="rotate(-22 72 42)"/>
+  <rect x="41" y="63" width="118" height="56" rx="28" fill="url(#${u}r)"/>
+  <rect x="46" y="68" width="108" height="46" rx="23" fill="url(#${u}v)"/>
+  <g clip-path="url(#${u}c)">
+    <ellipse cx="74" cy="76" rx="22" ry="5" fill="#fff" opacity=".18"/>
+    <g class="face"><g class="blink" filter="url(#${u}g)">
+      <path class="smile" d="${smile}" fill="none" stroke="#57d6ff" stroke-width="4.5" stroke-linecap="round"/>
+      <g class="scan"><path d="M72 92 H128" stroke="#57d6ff" stroke-width="3.5" stroke-linecap="round" opacity=".55"/><circle class="scan-dot" cx="100" cy="92" r="4.5" fill="#57d6ff"/></g>
+      <circle class="wow" cx="100" cy="92" r="8" fill="none" stroke="#57d6ff" stroke-width="4.5"/>
+    </g></g>
+  </g>
+</svg>`;
+}
+const mascot = $('#mascot');
+mascot.innerHTML = mascotSVG();
+$$('[data-mascot]').forEach(el => el.innerHTML = mascotSVG(el.dataset.mascot === 'mini-shrug' ? 'shrug' : 'main'));
+const face = mascot.querySelector('.face'), smileEl = mascot.querySelector('.smile');
+const SMILES = { idle:'M76 90 Q100 106 124 90', happy:'M72 86 Q100 116 128 86', flat:'M78 96 L122 96' };
+function mood(m){
+  mascot.classList.remove('think','wowing');
+  if (m === 'think') mascot.classList.add('think');
+  else if (m === 'wow') mascot.classList.add('wowing');
+  else smileEl.setAttribute('d', SMILES[m] || SMILES.idle);
+}
+function boing(){ if (calm) return; mascot.classList.remove('boing'); void mascot.offsetWidth; mascot.classList.add('boing'); }
+addEventListener('pointermove', e => {
+  const r = mascot.getBoundingClientRect(); if (!r.width) return;
+  const dx = e.clientX - (r.left + r.width/2), dy = e.clientY - (r.top + r.height/2);
+  const d = Math.hypot(dx,dy) || 1, k = Math.min(1, d/400);
+  face.style.transform = `translate(${(dx/d)*12*k}px,${(dy/d)*5*k}px)`;
+}, {passive:true});
+
+/* ---------------- Speech bubble tips ---------------- */
+let tipIdx = 0, typer = null;
+function tips(){
+  const t = totals(), share = ACCOUNTS[0].views / TOTAL_VIEWS;
+  const list = [];
+  if (t.all) list.push(`Publicaste <b>${t.videos} videos</b> frente a ${ALL.prevVideos} del periodo anterior (${(t.videos/ALL.prevVideos).toFixed(1)}×). Las vistas por video de ambas cohortes tienen edades distintas: eso no prueba que la calidad cambió.`);
+  else list.push(`Estás viendo <b>${t.n} de 4 cuentas</b>: ${t.videos} videos y ${fmt(t.views)} vistas. El periodo anterior no viene desglosado por cuenta.`);
+  const pctGoal = t.views / state.goal;
+  list.push(pctGoal >= 1 ? `¡Meta superada! <b>${fmt(t.views)}</b> de ${fmt(state.goal)} vistas (${Math.round(pctGoal*100)}%).` : `Vas en <b>${Math.round(pctGoal*100)}%</b> de la meta: faltan ${fmt(state.goal - t.views)} vistas.`);
+  list.push(`${ALL.maturing} videos siguen madurando (menos de 7 días). D7 cubre solo ${ALL.d7cov[0]} de ${ALL.d7cov[1]} videos maduros: todavía no alcanza para comparar calidad.`);
+  list.push(`Urbby concentra <b>${Math.round(share*100)}%</b> de las vistas con solo 10 videos. Urbby Office publicó 60 y promedia 1,795 por video.`);
+  list.push(`Ronald MUCH tiene la tasa de interacción más alta: <b>6.84%</b> con 4 videos. Buen candidato para probar más volumen.`);
+  list.push(`El 23 de septiembre la curva saltó de ≈7k a ≈35k vistas promedio. Vale la pena revisar qué se publicó ese día.`);
+  return list;
+}
+function showTip(i, instant){
+  const list = tips(); tipIdx = (i + list.length) % list.length;
+  $('#tipCount').textContent = `${tipIdx+1}/${list.length}`;
+  $('#tipDots').innerHTML = list.map((_,k)=>`<i class="${k===tipIdx?'on':''}"></i>`).join('');
+  const html = list[tipIdx], el = $('#tipText');
+  clearInterval(typer);
+  if (calm || instant){ el.innerHTML = html; return; }
+  // type the plain text, then swap in the formatted html
+  const plain = html.replace(/<[^>]+>/g,''); let n = 0;
+  mood('happy');
+  typer = setInterval(() => {
+    n += 2; el.innerHTML = plain.slice(0,n).replace(/&/g,'&amp;').replace(/</g,'&lt;') + '<span class="caret"></span>';
+    if (n >= plain.length){ clearInterval(typer); el.innerHTML = html; setTimeout(()=>mood('idle'), 600); }
+  }, 18);
+}
+const nextTip = () => { boing(); showTip(tipIdx+1); };
+mascot.addEventListener('click', nextTip);
+mascot.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' '){ e.preventDefault(); nextTip(); } });
+
+/* ---------------- Count-up ---------------- */
+function countUp(el, to, {dec=0, prefix='', suffix='', dur=1100}={}){
+  const show = v => el.textContent = prefix + (dec ? v.toFixed(dec) : fmt(v)) + suffix;
+  if (calm){ show(to); return; }
+  const from = parseFloat((el.dataset.v)||0), t0 = performance.now();
+  el.dataset.v = to;
+  const step = now => { const p = Math.min(1,(now-t0)/dur), e = 1-Math.pow(1-p,4); show(from + (to-from)*e); if (p<1) requestAnimationFrame(step); };
+  requestAnimationFrame(step);
+}
+
+/* ---------------- KPIs ---------------- */
+const IC = {
+  play:'<path d="M8 5.5v13l11-6.5z" fill="currentColor"/>',
+  eye:'<path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="3" fill="currentColor"/>',
+  clock:'<circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 7.5V12l3 2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>',
+  bars:'<path d="M5 20V11M12 20V5M19 20v-6" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>',
+  heart:'<path d="M12 20s-7-4.3-8.8-8.6C1.9 8.3 4 5 7.3 5c1.9 0 3.3 1.1 4.7 2.8C13.4 6.1 14.8 5 16.7 5 20 5 22.1 8.3 20.8 11.4 19 15.7 12 20 12 20z" fill="currentColor"/>',
+  user:'<circle cx="10" cy="8" r="4" fill="currentColor"/><path d="M2.5 20c.8-4 3.8-6 7.5-6s6.7 2 7.5 6z" fill="currentColor"/><path d="M19 7v6M16 10h6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>'
+};
+function renderKPIs(){
+  const t = totals();
+  const cov = ALL.d7cov[0]/ALL.d7cov[1];
+  const cards = [
+    { k:'videos', label:'Videos publicados', icon:'play', y:true, val:t.videos,
+      sub: t.all ? `${ALL.prevVideos} en el periodo anterior de igual duración` : 'Sin desglose por cuenta del periodo anterior',
+      tag: t.all ? `<span class="tag y">${(t.videos/ALL.prevVideos).toFixed(1)}× vs anterior</span>` : '' },
+    { k:'views', label:'Vistas actuales de esos videos', icon:'eye', val:t.views, sub:'Acumuladas desde que se publicó cada video', spark:true,
+      tag:`<span class="tag g"><i></i>${Math.round(t.views/state.goal*100)}% de meta</span>` },
+    { k:'d7', label:'Vistas D7 por video', icon:'clock', val: t.all ? ALL.d7 : null,
+      sub: t.all ? `Aprox. · ${ALL.d7cov[0]}/${ALL.d7cov[1]} videos maduros con snapshot D7` : 'D7 solo disponible para el total de cuentas',
+      tag:`<span class="tag w"><i></i>Cobertura ${Math.round(cov*100)}%</span>` },
+    { k:'vpv', label:'Vistas actuales por video', icon:'bars', val:t.vpv, sub:'No comparar entre cohortes de distinta edad', tag:'<span class="tag b">Sesgo por edad</span>' },
+    { k:'eng', label:'Engagement', icon:'heart', val:t.eng*100, dec:1, suffix:'%', sub:'Interacciones ÷ vistas de estos videos', tag:'<span class="tag b">Normalizada</span>' },
+    { k:'fol', label:'Seguidores netos', icon:'user', val: t.all ? ALL.followers : null, prefix:'+',
+      sub: t.all ? 'Cambio del periodo · 4/4 cuentas con datos' : 'Metricool no lo separa en esta vista',
+      tag: t.all ? '<span class="tag g"><i></i>4/4 cuentas</span>' : '' },
+  ];
+  const host = $('#kpis');
+  if (!host.children.length){
+    host.innerHTML = cards.map((c,i)=>`
+      <article class="card kpi reveal" style="--i:${i}" data-k="${c.k}">
+        <div class="kpi-top"><span class="app-ic ${c.y?'y':''}"><svg viewBox="0 0 24 24">${IC[c.icon]}</svg></span><span class="kpi-label">${c.label}</span><span class="tagslot"></span></div>
+        <div class="kpi-val">0</div>
+        <div class="kpi-sub"></div>
+        ${c.spark ? '<svg class="spark" preserveAspectRatio="none"></svg>' : ''}
+      </article>`).join('');
+    tilt();
+  }
+  cards.forEach(c => {
+    const el = host.querySelector(`[data-k="${c.k}"]`);
+    el.querySelector('.tagslot').outerHTML = `<span class="tagslot" style="margin-left:auto">${c.tag}</span>`;
+    el.querySelector('.kpi-sub').textContent = c.sub;
+    const v = el.querySelector('.kpi-val');
+    if (c.val == null){ v.textContent = '—'; v.classList.add('muted'); v.dataset.v = 0; }
+    else { v.classList.remove('muted'); countUp(v, c.val, {dec:c.dec||0, prefix:c.prefix||'', suffix:c.suffix||''}); }
+    if (c.spark) drawSpark(el.querySelector('.spark'));
+  });
+}
+function drawSpark(svg){
+  const w = svg.clientWidth || 300, h = 38, data = dailyData();
+  const max = Math.max(...data), x = i => i/(data.length-1)*w, y = v => h - 3 - v/max*(h-6);
+  const d = data.map((v,i)=>`${i?'L':'M'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join('');
+  svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
+  svg.innerHTML = `<defs><linearGradient id="spg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd02e" stop-opacity=".45"/><stop offset="1" stop-color="#ffd02e" stop-opacity="0"/></linearGradient></defs>
+    <path d="${d}L${w},${h}L0,${h}Z" fill="url(#spg)"/><path d="${d}" fill="none" stroke="#ffd02e" stroke-width="2" stroke-linejoin="round"/>
+    <circle cx="${x(data.length-1)}" cy="${y(data[data.length-1])}" r="3.5" fill="#fff" stroke="#ffd02e" stroke-width="2"/>`;
+}
+function tilt(){
+  if (matchMedia('(hover:none)').matches) return;
+  $$('.kpi').forEach(card => {
+    card.addEventListener('pointermove', e => {
+      if (calm) return;
+      const r = card.getBoundingClientRect(), px = (e.clientX-r.left)/r.width - .5, py = (e.clientY-r.top)/r.height - .5;
+      card.style.transform = `perspective(700px) rotateX(${-py*6}deg) rotateY(${px*8}deg) translateY(-3px)`;
+    });
+    card.addEventListener('pointerleave', () => card.style.transform = '');
+  });
+}
+
+/* ---------------- Insight + goal ---------------- */
+function renderInsight(){
+  const t = totals();
+  $('#insight').innerHTML = t.all
+    ? `Publicaste <strong>${t.videos} videos</strong> frente a ${ALL.prevVideos} en el periodo anterior (${(t.videos/ALL.prevVideos).toFixed(1)}×). Las vistas por video de ambas cohortes son acumuladas y tienen edades distintas: su diferencia no demuestra que la calidad haya mejorado o empeorado. Hay <strong>${ALL.maturing} videos en maduración</strong> y D7 disponible para ${ALL.d7cov[0]} de ${ALL.d7cov[1]} videos maduros.`
+    : `Vista filtrada: <strong>${selected().map(a=>a.name).join(', ')}</strong>. ${t.videos} videos, ${fmt(t.views)} vistas y ${pct(t.eng,2)} de interacción. El periodo anterior, D7 y seguidores solo existen para el total de cuentas.`;
+  $('#eyebrow').textContent = `${t.all ? 'Todas las cuentas' : selected().map(a=>a.name).join(' + ')} · 01/09/2026 – 27/09/2026 · métricas con su contexto`;
+}
+function renderGoal(){
+  const t = totals(), p = t.views / state.goal, C = 75.4;
+  $('#ringVal').style.strokeDashoffset = C * (1 - Math.min(1,p));
+  countUp($('#metaPct'), Math.round(p*100), {suffix:'%', dur:900});
+  const daily = state.goal/30;
+  $('#goalLegend').textContent = `Meta diaria ${fmt(daily)}`;
+  [$('#goalVal'),$('#goalVal2')].forEach(el => el.textContent = fmt(state.goal));
+  [$('#goal'),$('#goal2')].forEach(el => { el.value = state.goal; el.style.setProperty('--p', ((state.goal-100000)/900000*100)+'%'); });
+  return p;
+}
+
+/* ---------------- Charts ---------------- */
+const dailyData = () => { const t = totals(); const k = t.views/TOTAL_VIEWS; return DAILY.map(v=>v*k); };
+function el(tag, attrs={}, parent){ const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+function niceMax(v){ const p = Math.pow(10, Math.floor(Math.log10(v))); const n = v/p; return (n<=1?1:n<=2?2:n<=2.5?2.5:n<=5?5:10)*p; }
+
+function drawDaily(animate){
+  const host = $('#dailyChart'), tip = $('#dailyTip');
+  host.querySelector('svg')?.remove();
+  const W = host.clientWidth, H = W < 560 ? 240 : 300, m = {l:44,r:12,t:28,b:28};
+  const data = dailyData(), goalD = state.goal/30;
+  const max = niceMax(Math.max(...data, goalD)*1.08);
+  const x = i => m.l + i/(data.length-1)*(W-m.l-m.r), y = v => m.t + (1-v/max)*(H-m.t-m.b);
+  const svg = el('svg',{viewBox:`0 0 ${W} ${H}`,height:H,role:'img','aria-label':'Promedio móvil de 7 días de vistas por fecha de publicación'});
+  host.prepend(svg);
+  const defs = el('defs',{},svg);
+  defs.innerHTML = `<linearGradient id="dg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd02e" stop-opacity=".42"/><stop offset="1" stop-color="#ffd02e" stop-opacity="0"/></linearGradient>
+    <filter id="dglow"><feGaussianBlur stdDeviation="4"/></filter>`;
+  for (let i=0;i<=4;i++){ const v = max/4*i; el('line',{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),class:'gridline'},svg); const t = el('text',{x:m.l-8,y:y(v)+4,'text-anchor':'end'},svg); t.textContent = kfmt(v); }
+  const step = W < 560 ? 4 : 2;
+  data.forEach((_,i)=>{ if (i%step===0 || i===data.length-1){ const t = el('text',{x:x(i),y:H-6,'text-anchor':'middle'},svg); t.textContent = String(i+1).padStart(2,'0')+' sep'; }});
+  const line = data.map((v,i)=>`${i?'L':'M'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join('');
+  const area = el('path',{d:`${line}L${x(data.length-1)},${y(0)}L${x(0)},${y(0)}Z`,fill:'url(#dg)'},svg);
+  // goal line
+  const gy = y(goalD);
+  el('line',{x1:m.l,x2:W-m.r,y1:gy,y2:gy,stroke:'#c3ccef','stroke-width':1.6,'stroke-dasharray':'6 6',opacity:.8,class:'goal-line'},svg);
+  el('path',{d:line,fill:'none',stroke:'#ffd02e','stroke-width':6,opacity:.35,filter:'url(#dglow)'},svg);
+  const path = el('path',{d:line,fill:'none',stroke:'#ffd02e','stroke-width':3,'stroke-linejoin':'round','stroke-linecap':'round'},svg);
+  const dots = data.map((v,i)=>el('circle',{cx:x(i),cy:y(v),r:3.2,fill:'#ffd02e',opacity:animate&&!calm?0:1},svg));
+  // annotation on the jump (22 -> 23 sep)
+  const ai = 22, ax = x(ai), ay = y(data[ai]);
+  const ann = el('g',{class:'ann',opacity:animate&&!calm?0:1},svg);
+  const label = `¡Despegue! +${Math.round((DAILY[22]/DAILY[21]-1)*100)}%`, lw = label.length*7.2+22;
+  const bx = Math.min(W-m.r-lw, ax-lw-10);
+  el('rect',{x:bx,y:ay-16,width:lw,height:28,rx:14,fill:'#ffd02e'},ann);
+  const at = el('text',{x:bx+lw/2,y:ay+3,'text-anchor':'middle',style:'fill:#061550;font-weight:700;font-size:12.5px'},ann); at.textContent = label;
+  el('circle',{cx:ax,cy:ay,r:7,fill:'none',stroke:'#fff','stroke-width':2},ann);
+  // hover layer
+  const cross = el('line',{y1:m.t,y2:H-m.b,stroke:'#fff','stroke-width':1,opacity:0,'stroke-dasharray':'3 4'},svg);
+  const hot = el('circle',{r:7,fill:'#fff',stroke:'#ffd02e','stroke-width':3,opacity:0},svg);
+  const hit = el('rect',{x:m.l,y:0,width:W-m.l-m.r,height:H,fill:'transparent'},svg);
+  const move = e => {
+    const r = svg.getBoundingClientRect(), px = (e.clientX - r.left) * (W/r.width);
+    const i = Math.max(0, Math.min(data.length-1, Math.round((px-m.l)/(W-m.l-m.r)*(data.length-1))));
+    cross.setAttribute('x1',x(i)); cross.setAttribute('x2',x(i)); cross.setAttribute('opacity',.5);
+    hot.setAttribute('cx',x(i)); hot.setAttribute('cy',y(data[i])); hot.setAttribute('opacity',1);
+    const vs = data[i] >= goalD ? `<span style="color:#1d9e5b;font-weight:700">▲ sobre la meta diaria</span>` : `<span style="color:#6b7896">▼ bajo la meta diaria</span>`;
+    tip.innerHTML = `${String(i+1).padStart(2,'0')} sep 2026<b>≈ ${fmt(data[i])}</b>${vs}`;
+    tip.style.left = (x(i)/W*100)+'%'; tip.style.top = (y(data[i])/H*H)+'px'; tip.classList.add('on');
+  };
+  hit.addEventListener('pointermove', move); hit.addEventListener('pointerdown', move);
+  hit.addEventListener('pointerleave', () => { tip.classList.remove('on'); cross.setAttribute('opacity',0); hot.setAttribute('opacity',0); });
+  if (animate && !calm){
+    const L = path.getTotalLength();
+    path.style.strokeDasharray = L; path.style.strokeDashoffset = L;
+    area.style.opacity = 0;
+    requestAnimationFrame(()=>{
+      path.style.transition = 'stroke-dashoffset 1.8s cubic-bezier(.22,1,.36,1)'; path.style.strokeDashoffset = 0;
+      area.style.transition = 'opacity 1s .8s'; area.style.opacity = 1;
+      dots.forEach((d,i)=>{ d.style.transition = `opacity .3s ${0.3+i*0.05}s`; d.setAttribute('opacity',1); });
+      ann.style.transition = 'opacity .5s 1.7s'; ann.setAttribute('opacity',1);
+    });
+  }
+  $('#dailyEst').textContent = totals().all ? '' : 'Con filtro activo, la curva se estima en proporción a las vistas de las cuentas elegidas.';
+}
+
+function drawHBars(){
+  const t = ACCOUNTS.map(a => ({...a, eng:a.inter/a.views}));
+  const mk = (host, key, fmtv, color) => {
+    const arr = [...t].sort((a,b)=>b[key]-a[key]), max = Math.max(...arr.map(a=>a[key]));
+    const firstTime = !host.children.length;
+    if (firstTime) host.innerHTML = arr.map(a=>`<div class="hbar" data-id="${a.id}" role="button" tabindex="0" aria-label="Filtrar ${a.name}"><span class="hbar-name">${a.name}</span><div class="hbar-track"><div class="hbar-fill" style="background:${color(a)}"></div></div><span class="hbar-val">${fmtv(a[key])}</span></div>`).join('');
+    arr.forEach(a => {
+      const row = host.querySelector(`[data-id="${a.id}"]`);
+      row.classList.toggle('dim', !state.sel.has(a.id));
+      const fill = row.querySelector('.hbar-fill');
+      requestAnimationFrame(()=>requestAnimationFrame(()=> fill.style.width = (a[key]/max*100)+'%'));
+    });
+    if (firstTime) host.querySelectorAll('.hbar').forEach(r => {
+      const go = () => soloAccount(r.dataset.id);
+      r.addEventListener('click', go); r.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' '){ e.preventDefault(); go(); }});
+    });
+  };
+  mk($('#barsViews'), 'views', v => kfmt(v), () => 'linear-gradient(90deg,#f4be16,#ffd02e)');
+  mk($('#barsEng'), 'eng', v => pct(v,2), () => 'linear-gradient(90deg,#3068e6,#7fa6ff)');
+}
+
+function drawColumns(hostSel, tipSel, rows, {color='#ffd02e', empty=false, label='vistas'}={}){
+  const host = $(hostSel), tip = $(tipSel);
+  host.querySelector('svg')?.remove();
+  const W = host.clientWidth, H = 230, m = {l:44,r:8,t:16,b:28};
+  const vals = rows.map(r=>r[1]).filter(v=>v!=null), max = niceMax(Math.max(...vals)*1.05);
+  const svg = el('svg',{viewBox:`0 0 ${W} ${H}`,height:H}); host.prepend(svg);
+  const bw = (W-m.l-m.r)/rows.length, y = v => m.t + (1-v/max)*(H-m.t-m.b);
+  for (let i=0;i<=4;i++){ const v=max/4*i; el('line',{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),class:'gridline'},svg); const t=el('text',{x:m.l-8,y:y(v)+4,'text-anchor':'end'},svg); t.textContent=kfmt(v); }
+  rows.forEach((r,i)=>{
+    const cx = m.l + bw*i + bw/2, w = Math.min(46, bw*.6);
+    const t = el('text',{x:cx,y:H-8,'text-anchor':'middle'},svg); t.textContent = r[0];
+    if (r[1]==null){
+      el('rect',{x:cx-w/2,y:y(max*.35),width:w,height:y(0)-y(max*.35),rx:10,fill:'none',stroke:'rgba(160,190,255,.35)','stroke-dasharray':'4 5'},svg);
+      const q = el('text',{x:cx,y:y(max*.35)-8,'text-anchor':'middle',style:'font-size:10.5px'},svg); q.textContent = 'sin datos';
+      return;
+    }
+    const last = i === rows.length-1;
+    const g = el('g',{},svg);
+    const target = y(r[1]);
+    const rect = el('rect',{x:cx-w/2,y:target,width:w,height:Math.max(2,y(0)-target),rx:10,fill:color,opacity:last?1:.55},g);
+    if (!calm){ rect.style.cssText = 'transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0)';
+      setTimeout(()=>{ rect.style.transition='transform .9s cubic-bezier(.34,1.56,.64,1)'; rect.style.transform='scaleY(1)'; }, 200+i*90); }
+    if (last){ const v = el('text',{x:cx,y:target-8,'text-anchor':'middle',style:'fill:#fff;font-weight:700;font-size:12.5px'},g); v.textContent = kfmt(r[1]); }
+    const hit = el('rect',{x:cx-bw/2,y:m.t,width:bw,height:H-m.t-m.b,fill:'transparent'},svg);
+    hit.addEventListener('pointerenter',()=>{ rect.setAttribute('opacity',1); tip.innerHTML = `${r[0]} 2026<b>${last?'':'≈ '}${fmt(r[1])}</b>${label}`; tip.style.left=(cx/W*100)+'%'; tip.style.top=target+'px'; tip.classList.add('on'); });
+    hit.addEventListener('pointerleave',()=>{ rect.setAttribute('opacity',last?1:.55); tip.classList.remove('on'); });
+  });
+}
+
+function drawMatrix(){
+  const host = $('#matrixChart'), tip = $('#matrixTip');
+  host.querySelector('svg')?.remove();
+  const W = host.clientWidth, H = 300, m = {l:44,r:20,t:14,b:36};
+  const svg = el('svg',{viewBox:`0 0 ${W} ${H}`,height:H}); host.prepend(svg);
+  const xMax = 40000, yMax = .08;
+  const x = v => m.l + v/xMax*(W-m.l-m.r), y = v => m.t + (1-v/yMax)*(H-m.t-m.b);
+  for (let i=0;i<=4;i++){ const v = yMax/4*i; el('line',{x1:m.l,x2:W-m.r,y1:y(v),y2:y(v),class:'gridline'},svg); const t=el('text',{x:m.l-8,y:y(v)+4,'text-anchor':'end'},svg); t.textContent=(v*100).toFixed(0)+'%'; }
+  for (let i=0;i<=4;i++){ const v = xMax/4*i; const t=el('text',{x:x(v),y:H-16,'text-anchor':'middle'},svg); t.textContent=kfmt(v); }
+  const xl = el('text',{x:(W+m.l)/2,y:H-1,'text-anchor':'middle',style:'font-size:11px;font-weight:600'},svg); xl.textContent='Vistas actuales por video →';
+  ACCOUNTS.forEach((a,i)=>{
+    const vpv = a.views/a.videos, eng = a.inter/a.views, r = 8 + Math.sqrt(a.videos)*3.4;
+    const g = el('g',{style:`transform-origin:${x(vpv)}px ${y(eng)}px;${calm?'':`animation:float ${3+i*.5}s ease-in-out ${-i}s infinite`}`,opacity:state.sel.has(a.id)?1:.22},svg);
+    el('circle',{cx:x(vpv),cy:y(eng),r,fill:a.hex,opacity:.85,stroke:'#fff','stroke-opacity':.5,'stroke-width':2},g);
+    const tx = x(vpv) + r + 6 > W - 80 ? x(vpv) - r - 6 : x(vpv) + r + 6;
+    const dy = a.id==='some' ? -14 : a.id==='office' ? r + 16 : 4;
+    const t = el('text',{x:a.id==='office'?x(vpv):tx,y:y(eng)+dy,'text-anchor':a.id==='office'?'middle':(tx<x(vpv)?'end':'start'),style:'fill:#fff;font-weight:600;font-size:12px'},g); t.textContent = a.name;
+    g.style.cursor='pointer';
+    g.addEventListener('pointerenter',()=>{ tip.innerHTML=`${a.name}<b>${fmt(vpv)} vistas/video</b>${pct(eng,2)} interacción · ${a.videos} videos`; tip.style.left=(x(vpv)/W*100)+'%'; tip.style.top=(y(eng)-r+10)+'px'; tip.classList.add('on'); });
+    g.addEventListener('pointerleave',()=>tip.classList.remove('on'));
+    g.addEventListener('click',()=>soloAccount(a.id));
+  });
+}
+
+function renderTable(){
+  const cols = [['name','Cuenta'],['videos','Videos'],['views','Vistas actuales'],['inter','Interacciones'],['vpv','Vistas/video'],['eng','Tasa']];
+  const tbl = $('#accTable');
+  tbl.tHead.innerHTML = '<tr>' + cols.map(([k,l])=>`<th data-k="${k}" class="${state.sort.k===k?'sorted'+(state.sort.dir>0?' asc':''):''}" tabindex="0">${l}<span class="ar">▼</span></th>`).join('') + '</tr>';
+  const rows = ACCOUNTS.map(a=>({...a, vpv:a.views/a.videos, eng:a.inter/a.views}));
+  const {k,dir} = state.sort;
+  rows.sort((a,b)=> (typeof a[k]==='string' ? a[k].localeCompare(b[k]) : a[k]-b[k]) * dir);
+  const maxEng = Math.max(...rows.map(r=>r.eng));
+  tbl.tBodies[0].innerHTML = rows.map(r=>`<tr style="opacity:${state.sel.has(r.id)?1:.4}"><td><span class="who"><i style="--c:${r.color}"></i>${r.name}</span></td><td>${r.videos}</td><td>${fmt(r.views)}</td><td>${fmt(r.inter)}</td><td>${fmt(r.vpv)}</td><td><span class="rate-bar" style="width:${r.eng/maxEng*46}px"></span>${pct(r.eng,2)}</td></tr>`).join('');
+  tbl.tHead.querySelectorAll('th').forEach(th => {
+    const go = () => { const kk = th.dataset.k; state.sort = { k:kk, dir: state.sort.k===kk ? -state.sort.dir : (kk==='name'?1:-1) }; renderTable(); };
+    th.addEventListener('click', go); th.addEventListener('keydown', e => { if (e.key==='Enter') go(); });
+  });
+}
+
+/* ---------------- Filters ---------------- */
+function renderAccList(){
+  $('#accList').innerHTML = ACCOUNTS.map(a=>`<label class="acc-opt"><input type="checkbox" id="acc-${a.id}" value="${a.id}" style="--c:${a.hex}" ${state.sel.has(a.id)?'checked':''}>${a.name}<small>${a.videos} videos</small></label>`).join('');
+  $$('#accList input').forEach(i => i.addEventListener('change', () => {
+    if (!i.checked && state.sel.size === 1){ i.checked = true; toast('Dejá al menos una cuenta seleccionada'); return; }
+    i.checked ? state.sel.add(i.value) : state.sel.delete(i.value);
+    refreshAll(false);
+  }));
+}
+function soloAccount(id){
+  if (state.sel.size === 1 && state.sel.has(id)) state.sel = new Set(ACCOUNTS.map(a=>a.id));
+  else state.sel = new Set([id]);
+  renderAccList(); refreshAll(false); boing();
+}
+function togglePop(btn, pop){
+  const open = pop.hidden;
+  $$('.pop').forEach(p=>p.hidden=true); $$('[aria-expanded]').forEach(b=>b.setAttribute('aria-expanded','false'));
+  pop.hidden = !open; btn.setAttribute('aria-expanded', String(open));
+}
+$('#accBtn').addEventListener('click', e => { e.stopPropagation(); togglePop($('#accBtn'), $('#accPop')); });
+$('#goalBtn').addEventListener('click', e => { e.stopPropagation(); togglePop($('#goalBtn'), $('#goalPop')); });
+$$('.pop').forEach(p => p.addEventListener('click', e => e.stopPropagation()));
+document.addEventListener('click', () => { $$('.pop').forEach(p=>p.hidden=true); $$('[aria-expanded]').forEach(b=>b.setAttribute('aria-expanded','false')); });
+document.addEventListener('keydown', e => { if (e.key==='Escape') document.body.click(); });
+
+let goalTimer;
+function setGoal(v){
+  const was = totals().views / state.goal;
+  state.goal = +v; try { localStorage.setItem('urbby.goal', v); } catch(e){}
+  const p = renderGoal();
+  clearTimeout(goalTimer);
+  goalTimer = setTimeout(()=>{ drawDaily(false); renderKPIs(); if (p >= 1 && was < 1){ mood('happy'); boing(); confetti(80); } else if (p < 1 && was >= 1){ mood('flat'); setTimeout(()=>mood('idle'),1200); } showTip(1, true); }, 120);
+}
+$('#goal').addEventListener('input', e => setGoal(e.target.value));
+$('#goal2').addEventListener('input', e => setGoal(e.target.value));
+$('#month').addEventListener('change', e => { if (e.target.selectedIndex){ toast('Este prototipo solo tiene septiembre 2026 cargado'); mood('flat'); setTimeout(()=>{ e.target.selectedIndex = 0; mood('idle'); }, 900); } });
+$('#network').addEventListener('change', () => toast('Las 4 cuentas conectadas son TikTok: el resultado es el mismo'));
+
+function refreshAll(animate){
+  const t = totals();
+  $('#accLabel').textContent = t.all ? '4 cuentas' : (t.n === 1 ? selected()[0].name : `${t.n} cuentas`);
+  renderKPIs(); renderInsight(); renderGoal(); drawDaily(animate); drawHBars(); drawMatrix(); renderTable();
+  showTip(0, !animate);
+}
+
+/* ---------------- Refresh ---------------- */
+let syncedAt = Date.now();
+setInterval(()=>{ const s = Math.floor((Date.now()-syncedAt)/1000); $('#syncLabel').textContent = s < 60 ? 'Datos sincronizados hace menos de 1 min' : `Datos sincronizados hace ${Math.floor(s/60)} min`; }, 5000);
+$('#refresh').addEventListener('click', () => {
+  const b = $('#refresh'); if (b.classList.contains('loading')) return;
+  b.classList.add('loading'); b.querySelector('span').textContent = 'Actualizando…';
+  mood('think'); clearInterval(typer); $('#tipText').innerHTML = 'Hablando con Metricool… revisando 4 cuentas<span class="caret"></span>';
+  const bar = $('#progress'); bar.style.opacity = 1; bar.style.width = '0'; requestAnimationFrame(()=>bar.style.width='100%');
+  setTimeout(()=>{
+    b.classList.remove('loading'); b.querySelector('span').textContent = 'Actualizar datos';
+    bar.style.opacity = 0; setTimeout(()=>bar.style.width='0',400);
+    syncedAt = Date.now(); $('#syncLabel').textContent = 'Datos sincronizados hace menos de 1 min';
+    $$('.kpi-val').forEach(v => v.dataset.v = 0);
+    mood('happy'); boing(); refreshAll(true); confetti(50);
+    toast('Actualización ok: 137 videos de 4 cuentas.');
+  }, 1700);
+});
+
+/* ---------------- Toast + confetti ---------------- */
+let toastT;
+function toast(msg){ $('#toastText').textContent = msg; $('#toast').classList.add('on'); clearTimeout(toastT); toastT = setTimeout(()=>$('#toast').classList.remove('on'), 2800); }
+const cv = $('#confetti'), cx = cv.getContext('2d'); let parts = [], raf = 0;
+function confetti(n){
+  if (calm) return;
+  cv.width = innerWidth*devicePixelRatio; cv.height = innerHeight*devicePixelRatio; cx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+  const cols = ['#ffd02e','#ffd02e','#5a8cff','#ffffff','#3ddc97','#57d6ff'];
+  const r = $('#mascot').getBoundingClientRect(), ox = r.width ? r.left + r.width/2 : innerWidth/2, oy = r.width ? r.top + 20 : innerHeight/3;
+  for (let i=0;i<n;i++) parts.push({ x:ox, y:oy, vx:(Math.random()-.5)*14, vy:-Math.random()*13-4, s:Math.random()*8+5, rot:Math.random()*6, vr:(Math.random()-.5)*.4, c:cols[i%cols.length], plus:Math.random()<.3, life:0 });
+  if (!raf) raf = requestAnimationFrame(tick);
+}
+function tick(){
+  cx.clearRect(0,0,innerWidth,innerHeight);
+  parts.forEach(p => { p.vy += .38; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.rot += p.vr; p.life++;
+    cx.save(); cx.translate(p.x,p.y); cx.rotate(p.rot); cx.fillStyle = p.c; cx.globalAlpha = Math.max(0, 1 - p.life/140);
+    if (p.plus){ cx.fillRect(-p.s/2,-p.s/7,p.s,p.s/3.5); cx.fillRect(-p.s/7,-p.s/2,p.s/3.5,p.s); } else cx.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);
+    cx.restore(); });
+  parts = parts.filter(p => p.y < innerHeight + 40 && p.life < 140);
+  raf = parts.length ? requestAnimationFrame(tick) : (cx.clearRect(0,0,innerWidth,innerHeight), 0);
+}
+
+/* ---------------- Background pills ---------------- */
+function buildPills(){
+  const host = $('#bgPills'); let html = '';
+  const rnd = (a,b) => a + Math.random()*(b-a);
+  for (let row=0; row<22; row++){
+    let x = rnd(-400,0);
+    while (x < 2600){
+      const w = rnd(260,900), h = rnd(90,170), dark = Math.random() < .35;
+      html += `<span class="pill ${dark?'dark':''}" style="left:calc(50% - 1300px + ${x}px);top:calc(50% - 1500px + ${row*140 + rnd(-10,10)}px);width:${w}px;height:${h}px;--d:${rnd(50,110)}s;--dx:${rnd(-260,-120)}px"></span>`;
+      x += w + rnd(40,260);
+    }
+  }
+  host.innerHTML = html;
+  let ph = ''; for (let i=0;i<9;i++) ph += `<span style="left:${i%3*110 - 20}px;top:${Math.floor(i/3)*110 + 60}px;width:${rnd(120,220)}px;animation-delay:${-i}s"></span>`;
+  $('#phonePills').innerHTML = ph;
+}
+
+/* ---------------- Tabs ---------------- */
+function moveInk(){ const a = $('.tab[aria-selected="true"]'), ink = $('#tabInk'); ink.style.left = a.offsetLeft+'px'; ink.style.width = a.offsetWidth+'px'; }
+const drawn = {};
+function openTab(name){
+  $$('.tab').forEach(t => t.setAttribute('aria-selected', String(t.dataset.tab===name)));
+  $$('[role=tabpanel]').forEach(p => p.hidden = p.id !== 'panel-'+name);
+  moveInk(); $('.tab[aria-selected="true"]').scrollIntoView({block:'nearest',inline:'center',behavior:calm?'auto':'smooth'});
+  if (name==='resumen') requestAnimationFrame(()=>{ drawDaily(false); drawColumns('#monthsChart','#monthsTip',MONTHS); drawColumns('#followChart','#followTip',FOLLOW,{color:'#3ddc97',label:'seguidores netos'}); drawMatrix(); $$('.kpi .spark').forEach(drawSpark); });
+  if (name==='ganadores') renderPodium();
+  if (name==='comparativo' && !drawn.vs){ drawn.vs = 1; initVs(); }
+  if (name==='nueva' && !drawn.nueva){ drawn.nueva = 1; initComposer(); }
+  try { history.replaceState(null,'','#'+name); } catch(e){}
+}
+$$('.tab').forEach(t => t.addEventListener('click', () => openTab(t.dataset.tab)));
+$('#tabs').addEventListener('keydown', e => {
+  if (!['ArrowRight','ArrowLeft'].includes(e.key)) return;
+  const tabs = $$('.tab'), i = tabs.findIndex(t=>t.getAttribute('aria-selected')==='true');
+  const n = tabs[(i + (e.key==='ArrowRight'?1:-1) + tabs.length) % tabs.length]; openTab(n.dataset.tab); n.focus();
+});
+
+/* ---------------- Ganadores ---------------- */
+function renderPodium(){
+  const rows = ACCOUNTS.map(a=>({...a, vpv:a.views/a.videos, eng:a.inter/a.views})).sort((a,b)=>b.vpv-a.vpv);
+  const heights = [300, 240, 200, 170];
+  $('#podium').innerHTML = rows.map((r,i)=>`
+    <div class="pod ${i===0?'first on':''} reveal" style="--i:${i};min-height:${heights[i]}px" data-id="${r.id}" tabindex="0" role="button">
+      ${i===0 ? `<svg class="crown" viewBox="0 0 40 26"><path d="M3 22 L6 6 L14 14 L20 2 L26 14 L34 6 L37 22Z" fill="currentColor"/></svg><div class="mascot-sm">${mascotSVG()}</div>` : ''}
+      <div class="rank">${i+1}</div>
+      <div class="nm"><span style="color:${r.hex}">●</span> ${r.name}</div>
+      <div class="v">${fmt(r.vpv)}</div>
+      <div class="s">vistas/video · ${r.videos} videos</div>
+    </div>`).join('');
+  const pick = id => {
+    $$('.pod').forEach(p=>p.classList.toggle('on', p.dataset.id===id));
+    const r = rows.find(x=>x.id===id), rank = rows.indexOf(r)+1, bestEng = rows.reduce((a,b)=>a.eng>b.eng?a:b);
+    const bullets = [
+      `${fmt(r.vpv)} vistas actuales por video con ${r.videos} video${r.videos>1?'s':''}.`,
+      `Tasa de interacción de ${pct(r.eng,2)}${r.id===bestEng.id?' · la más alta de las 4 cuentas':''}.`,
+      r.videos < 6 ? 'Muestra chica: probá 5–10 videos más antes de mover presupuesto.' : 'Muestra amplia: el promedio es más estable.',
+      'Vistas por video acumuladas: confirmar con D7 cuando haya cobertura.'
+    ];
+    $('#whyCard').innerHTML = `<div class="mascot-sm" style="width:110px">${mascotSVG()}</div><div><div class="eyebrow">Puesto ${rank} · por qué mirarla</div><h3 style="font-family:var(--display);font-size:26px;margin:2px 0 0">${r.name}</h3><ul>${bullets.map(b=>`<li>${b}</li>`).join('')}</ul></div>`;
+  };
+  $$('.pod').forEach(p => { p.addEventListener('mouseenter',()=>pick(p.dataset.id)); p.addEventListener('click',()=>pick(p.dataset.id)); p.addEventListener('focus',()=>pick(p.dataset.id)); });
+  pick(rows[0].id);
+}
+
+/* ---------------- Comparativo ---------------- */
+function initVs(){
+  const opts = ACCOUNTS.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
+  $('#vsA').innerHTML = opts; $('#vsB').innerHTML = opts; $('#vsA').value = 'urbby'; $('#vsB').value = 'office';
+  const draw = () => {
+    const A = ACCOUNTS.find(a=>a.id===$('#vsA').value), B = ACCOUNTS.find(a=>a.id===$('#vsB').value);
+    const m = [['Videos','videos',v=>fmt(v)],['Vistas actuales','views',v=>kfmt(v)],['Interacciones','inter',v=>kfmt(v)],['Vistas/video','vpv',v=>fmt(v)],['Tasa','eng',v=>pct(v,2)]];
+    const val = (a,k) => k==='vpv'? a.views/a.videos : k==='eng'? a.inter/a.views : a[k];
+    const host = $('#vsRows'); const first = !host.children.length;
+    if (first) host.innerHTML = m.map(([l,k])=>`<div class="vs-row" data-k="${k}"><div class="vs-side l"><div class="vs-bar"></div><span class="vs-num"></span><span class="star">★</span></div><div class="lbl">${l}</div><div class="vs-side r"><div class="vs-bar"></div><span class="vs-num"></span><span class="star">★</span></div></div>`).join('');
+    m.forEach(([l,k,f])=>{
+      const row = host.querySelector(`[data-k="${k}"]`), a = val(A,k), b = val(B,k), mx = Math.max(a,b)||1;
+      const [L,R] = row.querySelectorAll('.vs-side');
+      L.querySelector('.vs-bar').style.cssText = `background:${A.hex};width:${a/mx*70}%`; L.querySelector('.vs-num').textContent = f(a);
+      R.querySelector('.vs-bar').style.cssText = `background:${B.hex};width:${b/mx*70}%`; R.querySelector('.vs-num').textContent = f(b);
+      L.classList.toggle('win', a>b && A.id!==B.id); R.classList.toggle('win', b>a && A.id!==B.id);
+    });
+  };
+  $('#vsA').addEventListener('change', draw); $('#vsB').addEventListener('change', draw); draw();
+}
+
+/* ---------------- Composer ---------------- */
+function initComposer(){
+  $('#cAcc').innerHTML = ACCOUNTS.map(a=>`<option value="${a.id}">${a.name}</option>`).join('');
+  try { const d = JSON.parse(localStorage.getItem('urbby.draft')||'null'); if (d){ $('#cAcc').value = d.acc; $('#cCover').value = d.cover; $('#cCap').value = d.cap; } } catch(e){}
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const upd = () => {
+    const acc = ACCOUNTS.find(a=>a.id===$('#cAcc').value), cap = $('#cCap').value, cover = $('#cCover').value;
+    const parts = esc(cover).split(/,\s*/);
+    $('#pvCover').innerHTML = parts.length > 1 ? `${parts[0]},<span class="y"> ${parts.slice(1).join(', ')}</span>` : esc(cover);
+    $('#pvCap').innerHTML = `<b>@${acc.handle}</b>${esc(cap).replace(/#([\wáéíóúñü]+)/gi,'<span class="ht">#$1</span>')}`;
+    $('#capCount').textContent = cap.length;
+    const firstLine = cap.split(/(?<=[.?!])\s|\n/)[0] || '';
+    const tags = (cap.match(/#[\wáéíóúñü]+/gi)||[]).length;
+    const ok = { hook: firstLine.trim().length>0 && firstLine.length<=80, tags: tags>=3 && tags<=5, cta: /(coment|escrib|guard|link|dm|mensaje|seguí|segui|compart)/i.test(cap) };
+    $$('#checks .ck').forEach(c => c.classList.toggle('ok', ok[c.dataset.k]));
+  };
+  ['#cAcc','#cCover','#cCap'].forEach(s => $(s).addEventListener('input', upd));
+  let likes = 0;
+  $('#pvHeart').addEventListener('click', () => { const h = $('#pvHeart'); h.classList.toggle('liked'); likes = h.classList.contains('liked') ? 1 : 0; $('#pvLikes').textContent = likes; if (likes) confetti(18); });
+  $('#saveDraft').addEventListener('click', () => {
+    try { localStorage.setItem('urbby.draft', JSON.stringify({acc:$('#cAcc').value, cover:$('#cCover').value, cap:$('#cCap').value})); toast('Borrador guardado en este navegador'); }
+    catch(e){ toast('Este navegador no permite guardar borradores'); }
+  });
+  upd();
+}
+
+/* ---------------- Settings ---------------- */
+$('#animSwitch').setAttribute('aria-checked', String(!calm));
+$('#animSwitch').addEventListener('click', () => {
+  calm = !calm; document.documentElement.classList.toggle('calm', calm);
+  $('#animSwitch').setAttribute('aria-checked', String(!calm));
+  try { localStorage.setItem('urbby.calm', calm?'1':'0'); } catch(e){}
+  toast(calm ? 'Animaciones apagadas' : 'Animaciones encendidas');
+});
+
+/* ---------------- Boot ---------------- */
+buildPills();
+renderAccList();
+refreshAll(true);
+drawColumns('#monthsChart','#monthsTip',MONTHS);
+drawColumns('#followChart','#followTip',FOLLOW,{color:'#3ddc97',label:'seguidores netos'});
+requestAnimationFrame(moveInk);
+document.fonts && document.fonts.ready.then(moveInk);
+const hash = (location.hash||'').slice(1);
+if (['ganadores','comparativo','nueva','config'].includes(hash)) openTab(hash);
+if (totals().views >= state.goal) setTimeout(()=>{ confetti(70); mood('happy'); }, 1500);
+let rz; addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(()=>{ moveInk(); if (!$('#panel-resumen').hidden){ drawDaily(false); drawColumns('#monthsChart','#monthsTip',MONTHS); drawColumns('#followChart','#followTip',FOLLOW,{color:'#3ddc97',label:'seguidores netos'}); drawMatrix(); $$('.kpi .spark').forEach(drawSpark); } }, 150); });
+})();
+</script>

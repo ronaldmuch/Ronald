@@ -73,6 +73,11 @@ const isI = m => Math.abs(m[0] - 1) < 1e-7 && Math.abs(m[1]) < 1e-7 && Math.abs(
 // ───────────────────────── nombres de capas ─────────────────────────
 // Los id del SVG vienen como "<nombre>@@<id figma>", con el nombre en UTF-8 leído como latin-1.
 export function decodeName(raw) { try { return decodeURIComponent(escape(raw)); } catch (e) { return raw; } }
+// Capas de dirección que viven en Figma pero nunca deben salir en el video.
+export const GUIDE_RE = /^GU[IÍ]A DE C[AÁ]MARA/i;
+export function stripGuides(root) {
+  for (const el of [...root.querySelectorAll('[id*="@@"]')]) if (el.isConnected && GUIDE_RE.test(decodeName(el.id.split('@@')[0]))) el.remove();
+}
 
 // ───────────────────────── Shot runtime ─────────────────────────
 const SVGNS = 'http://www.w3.org/2000/svg';
@@ -86,6 +91,7 @@ export class Shot {
     this.div.innerHTML = svgText;
     container.appendChild(this.div);
     this.svg = this.div.querySelector('svg');
+    stripGuides(this.svg);
     this.svg.setAttribute('width', W); this.svg.setAttribute('height', H);
     this.root = this.svg.querySelector('g');
     this.bySid = new Map(); this.byName = new Map();

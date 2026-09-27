@@ -22,6 +22,11 @@ for (const id of shots) {
   const t0 = Date.now();
   const dir = path.join(OUT, `shot_${id}`); fs.rmSync(dir, { recursive: true, force: true }); fs.mkdirSync(dir, { recursive: true });
   await A.setContent(`<!doctype html><body style="margin:0">${fs.readFileSync(path.join(SRC, `shot_${id}.svg`), 'utf8')}</body>`);
+  // fuera las guías de cámara de Figma: no se hornean ni llegan al render
+  await A.evaluate(() => {
+    const dec = raw => { try { return decodeURIComponent(escape(raw)); } catch (e) { return raw; } };
+    for (const el of [...document.querySelectorAll('svg [id*="@@"]')]) if (el.isConnected && /^GU[IÍ]A DE C[AÁ]MARA/i.test(dec(el.id.split('@@')[0]))) el.remove();
+  });
   // halo de legibilidad para titulares (sombra suave horneada detrás del texto vectorial)
   await A.evaluate(() => {
     const NS = 'http://www.w3.org/2000/svg';

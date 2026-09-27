@@ -36,3 +36,19 @@ Para ver la mezcla: `python3 tools/audioviz.py audio.png`.
 - **Acto 3 · La vida nueva** (79–99 s): medio tiempo, pads abiertos y pájaros; sube en 26, crescendo con pops en cadena en 27 y golpe final + chime de marca en el cierre.
 
 Las voces (bostezo, suspiros, "mm") son síntesis simples; si se quiere voz en off real o frases del cliente ("¡gracias!"), conviene grabarlas y sumarlas a la mezcla.
+
+## Animática · 3.2 Ecosistema Urbby — V2
+
+Paso 2 del flujo (entre guion y assets): valida ritmo y emoción antes de programar las escenas.
+
+```
+python3 tools/animatica.py                                   # con pista de clic a 129 BPM
+python3 tools/animatica.py --song we_on_go.mp3 --offset 0.0  # con la canción
+```
+
+- `assets/animatica_v2/NN.png` — cuadros exportados de la página *3.2 Ecosistema Urbby — V2 (dirección de cámara)* sin las guías.
+- `assets/animatica_v2/plan.json` — beat de inicio, duración en beats y rects de cámara A/B/C de cada escena (de la "GUÍA DE CÁMARA").
+- Tempo: 129 BPM · 124 beats = 57.7 s. Acto 1 = 32 beats, entra WE ON GO en el beat 32 (compás 9), Acto 3 desde el beat 96.
+- Resultado: `animatica_v2.mp4` (1280×720, 30 fps, contador de compás en pantalla).
+
+Las capas cuyo nombre empieza con **GUÍA DE CÁMARA** se eliminan solas en `tools/bake.mjs` y en `src/engine.js` (`stripGuides`), así nunca llegan al render.

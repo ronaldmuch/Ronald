@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Ecosistema Urbby · animación</title>
+<style>
+  @font-face { font-family: 'Inter'; font-weight: 600; src: url('../node_modules/@fontsource/inter/files/inter-latin-600-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Inter'; font-weight: 700; src: url('../node_modules/@fontsource/inter/files/inter-latin-700-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Inter'; font-weight: 800; src: url('../node_modules/@fontsource/inter/files/inter-latin-800-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Fira Sans Condensed'; font-weight: 700; src: url('../node_modules/@fontsource/fira-sans-condensed/files/fira-sans-condensed-latin-700-normal.woff2') format('woff2'); }
+  @font-face { font-family: 'Fira Sans Condensed'; font-weight: 800; src: url('../node_modules/@fontsource/fira-sans-condensed/files/fira-sans-condensed-latin-800-normal.woff2') format('woff2'); }
+  html, body { margin: 0; padding: 0; background: #000; overflow: hidden; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: #000; }
+  .shot { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; will-change: transform; }
+  .shot svg { display: block; }
+  .fx { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
+  #fx-black { background: #000; opacity: 0; z-index: 20; }
+  #fx-glow { opacity: 0; z-index: 21; }
+  #fx-flash { opacity: 0; z-index: 22; }
+  #fx-band { display: none; z-index: 23; filter: blur(6px); }
+  #fx-ring { display: none; z-index: 24; }
+  #fx-tint { opacity: 0; z-index: 19; }
+  #fx-vig { z-index: 18; background: radial-gradient(ellipse at center, rgba(0,0,0,0) 62%, rgba(0,0,0,0.16) 100%); }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="fx-tint" class="fx"></div>
+  <div id="fx-vig" class="fx"></div>
+  <div id="fx-black" class="fx"></div>
+  <div id="fx-glow" class="fx"></div>
+  <div id="fx-flash" class="fx"></div>
+  <div id="fx-band" class="fx"></div>
+  <svg id="fx-ring" class="fx" width="1920" height="1080"><circle id="fx-ring-c" cx="0" cy="0" r="0" fill="none" stroke="#fff"/></svg>
+</div>
+<svg width="0" height="0" style="position:absolute">
+  <filter id="mbOut" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="0 0" edgeMode="duplicate"/></filter>
+  <filter id="mbCam" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="0 0" edgeMode="duplicate"/></filter>
+  <filter id="mbIn" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="0 0" edgeMode="duplicate"/></filter>
+</svg>
+<script type="module">
+  import * as P from './player.js';
+  const q = new URLSearchParams(location.search);
+  const only = q.get('only') ? q.get('only').split(',') : null;
+  await document.fonts.load('800 40px "Fira Sans Condensed"');
+  await document.fonts.load('700 40px "Inter"');
+  await P.load(only);
+  window.P = P;
+  window.TOTAL = P.TOTAL;
+  if (q.get('t')) P.render(+q.get('t'));
+  window.READY = true;
+</script>
+</body>
+</html>

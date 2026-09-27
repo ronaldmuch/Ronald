@@ -1,0 +1,422 @@
+[
+ {
+  "shot": "01",
+  "id": "248:3663",
+  "name": "01 · La noche · 5s",
+  "timelines": [
+   {
+    "id": "248:3663",
+    "duration": 5
+   }
+  ],
+  "animatedNodes": 14,
+  "svgLen": 198717,
+  "tagged": 167
+ },
+ {
+  "shot": "02",
+  "id": "249:3662",
+  "name": "02 · La vida del dueño 1 — Respondiendo mensajes hasta las 11 p. m.",
+  "timelines": [
+   {
+    "id": "249:3662",
+    "duration": 1.208333
+   }
+  ],
+  "animatedNodes": 6,
+  "svgLen": 60076,
+  "tagged": 96
+ },
+ {
+  "shot": "03",
+  "id": "249:3805",
+  "name": "03 · La vida del dueño 2 — Dos horas creando guías en Sistrack",
+  "timelines": [
+   {
+    "id": "249:3805",
+    "duration": 1.208333
+   }
+  ],
+  "animatedNodes": 7,
+  "svgLen": 306653,
+  "tagged": 74
+ },
+ {
+  "shot": "04",
+  "id": "249:3933",
+  "name": "04 · La vida del dueño 3 — Revisando las ventas de Shopify para crear las guías",
+  "timelines": [
+   {
+    "id": "249:3933",
+    "duration": 1.208333
+   }
+  ],
+  "animatedNodes": 5,
+  "svgLen": 667163,
+  "tagged": 137
+ },
+ {
+  "shot": "05",
+  "id": "249:4110",
+  "name": "05 · La vida del dueño 4 — Llenando un Excel con el registro de pedidos",
+  "timelines": [
+   {
+    "id": "249:4110",
+    "duration": 1.208333
+   }
+  ],
+  "animatedNodes": 6,
+  "svgLen": 262119,
+  "tagged": 86
+ },
+ {
+  "shot": "06",
+  "id": "249:4246",
+  "name": "06 · La vida del dueño 5 — Dos horas creando facturas electrónicas",
+  "timelines": [
+   {
+    "id": "249:4246",
+    "duration": 1.208333
+   }
+  ],
+  "animatedNodes": 5,
+  "svgLen": 209260,
+  "tagged": 47
+ },
+ {
+  "shot": "07",
+  "id": "249:4338",
+  "name": "07 · La vida del dueño 6 — Escribiéndole a cada cliente por su pedido",
+  "timelines": [
+   {
+    "id": "249:4338",
+    "duration": 1.208333
+   }
+  ],
+  "animatedNodes": 7,
+  "svgLen": 197755,
+  "tagged": 43
+ },
+ {
+  "shot": "08",
+  "id": "249:4435",
+  "name": "08 · La vida del dueño 7 — Revisando quién pagó y cuánto falta por cobrar",
+  "timelines": [
+   {
+    "id": "249:4435",
+    "duration": 1.208333
+   }
+  ],
+  "animatedNodes": 6,
+  "svgLen": 233253,
+  "tagged": 45
+ },
+ {
+  "shot": "09",
+  "id": "249:4532",
+  "name": "09 · La vida del dueño 8 — Marcando en Excel los que ya pagaron",
+  "timelines": [
+   {
+    "id": "249:4532",
+    "duration": 1.208333
+   }
+  ],
+  "animatedNodes": 5,
+  "svgLen": 260383,
+  "tagged": 80
+ },
+ {
+  "shot": "10",
+  "id": "249:4653",
+  "name": "10 · La vida del dueño 9 — Y sin números reales de Meta",
+  "timelines": [
+   {
+    "id": "249:4653",
+    "duration": 1.333333
+   }
+  ],
+  "animatedNodes": 4,
+  "svgLen": 353404,
+  "tagged": 91
+ },
+ {
+  "shot": "11",
+  "id": "251:3662",
+  "name": "11 · Los gastos — picado",
+  "timelines": [
+   {
+    "id": "251:3662",
+    "duration": 4
+   }
+  ],
+  "animatedNodes": 7,
+  "svgLen": 126640,
+  "tagged": 184
+ },
+ {
+  "shot": "12",
+  "id": "251:3895",
+  "name": "12 · Entra Urbby — plano medio",
+  "timelines": [
+   {
+    "id": "251:3895",
+    "duration": 5
+   }
+  ],
+  "animatedNodes": 23,
+  "svgLen": 70799,
+  "tagged": 198
+ },
+ {
+  "shot": "13",
+  "id": "251:4510",
+  "name": "13 · El anuncio — toma trasera",
+  "timelines": [
+   {
+    "id": "251:4510",
+    "duration": 4
+   }
+  ],
+  "animatedNodes": 5,
+  "svgLen": 269785,
+  "tagged": 135
+ },
+ {
+  "shot": "14",
+  "id": "251:4799",
+  "name": "14 · Respuesta — plano detalle del chat",
+  "timelines": [
+   {
+    "id": "251:4799",
+    "duration": 4
+   }
+  ],
+  "animatedNodes": 7,
+  "svgLen": 213099,
+  "tagged": 85
+ },
+ {
+  "shot": "14b",
+  "id": "255:3827",
+  "name": "14b · Mientras vos descansás · 2s",
+  "timelines": [
+   {
+    "id": "255:3827",
+    "duration": 2
+   }
+  ],
+  "animatedNodes": 6,
+  "svgLen": 60971,
+  "tagged": 135
+ },
+ {
+  "shot": "15",
+  "id": "251:5049",
+  "name": "15 · Contexto — primerísimo plano del visor",
+  "timelines": [
+   {
+    "id": "251:5049",
+    "duration": 3
+   }
+  ],
+  "animatedNodes": 7,
+  "svgLen": 427648,
+  "tagged": 160
+ },
+ {
+  "shot": "16",
+  "id": "251:5375",
+  "name": "16 · El pago — web view dentro de WhatsApp",
+  "timelines": [
+   {
+    "id": "251:5375",
+    "duration": 5
+   }
+  ],
+  "animatedNodes": 5,
+  "svgLen": 520807,
+  "tagged": 140
+ },
+ {
+  "shot": "17",
+  "id": "251:5657",
+  "name": "17 · Aprobado — primer plano del rostro",
+  "timelines": [
+   {
+    "id": "251:5657",
+    "duration": 3
+   }
+  ],
+  "animatedNodes": 30,
+  "svgLen": 67067,
+  "tagged": 171
+ },
+ {
+  "shot": "18",
+  "id": "251:6278",
+  "name": "18 · Urbby Marketplace — mismo camino",
+  "timelines": [
+   {
+    "id": "251:6278",
+    "duration": 5
+   }
+  ],
+  "animatedNodes": 13,
+  "svgLen": 588371,
+  "tagged": 180
+ },
+ {
+  "shot": "19",
+  "id": "251:6752",
+  "name": "19 · CAPI — la venta vuelve a Meta",
+  "timelines": [
+   {
+    "id": "251:6752",
+    "duration": 5
+   }
+  ],
+  "animatedNodes": 10,
+  "svgLen": 653362,
+  "tagged": 196
+ },
+ {
+  "shot": "19b",
+  "id": "255:4275",
+  "name": "19b · Ronald ve el resultado · 2s",
+  "timelines": [
+   {
+    "id": "255:4275",
+    "duration": 2
+   }
+  ],
+  "animatedNodes": 2,
+  "svgLen": 44869,
+  "tagged": 124
+ },
+ {
+  "shot": "20",
+  "id": "251:7138",
+  "name": "20 · La guía — plano detalle",
+  "timelines": [
+   {
+    "id": "251:7138",
+    "duration": 3
+   }
+  ],
+  "animatedNodes": 6,
+  "svgLen": 259741,
+  "tagged": 496
+ },
+ {
+  "shot": "21",
+  "id": "251:7688",
+  "name": "21 · La recogida — contrapicado",
+  "timelines": [
+   {
+    "id": "251:7688",
+    "duration": 4
+   }
+  ],
+  "animatedNodes": 6,
+  "svgLen": 111842,
+  "tagged": 202
+ },
+ {
+  "shot": "22",
+  "id": "251:7936",
+  "name": "22 · En ruta — travelling",
+  "timelines": [
+   {
+    "id": "251:7936",
+    "duration": 4
+   }
+  ],
+  "animatedNodes": 13,
+  "svgLen": 95098,
+  "tagged": 90
+ },
+ {
+  "shot": "23",
+  "id": "251:8088",
+  "name": "23 · La entrega — plano de dos",
+  "timelines": [
+   {
+    "id": "251:8088",
+    "duration": 5
+   }
+  ],
+  "animatedNodes": 7,
+  "svgLen": 128892,
+  "tagged": 375
+ },
+ {
+  "shot": "24",
+  "id": "251:8529",
+  "name": "24 · El disparador — factura y gracias",
+  "timelines": [
+   {
+    "id": "251:8529",
+    "duration": 5
+   }
+  ],
+  "animatedNodes": 5,
+  "svgLen": 706842,
+  "tagged": 173
+ },
+ {
+  "shot": "25",
+  "id": "251:8860",
+  "name": "25 · El dashboard — toma trasera",
+  "timelines": [
+   {
+    "id": "251:8860",
+    "duration": 4
+   }
+  ],
+  "animatedNodes": 3,
+  "svgLen": 247136,
+  "tagged": 101
+ },
+ {
+  "shot": "26",
+  "id": "251:9075",
+  "name": "26 · Antes y ahora — primer plano",
+  "timelines": [
+   {
+    "id": "251:9075",
+    "duration": 5
+   }
+  ],
+  "animatedNodes": 4,
+  "svgLen": 143699,
+  "tagged": 149
+ },
+ {
+  "shot": "27",
+  "id": "251:9413",
+  "name": "27 · Todo funciona en Urbby — órbita",
+  "timelines": [
+   {
+    "id": "251:9413",
+    "duration": 5
+   }
+  ],
+  "animatedNodes": 10,
+  "svgLen": 128100,
+  "tagged": 124
+ },
+ {
+  "shot": "28",
+  "id": "251:9843",
+  "name": "28 · Cierre",
+  "timelines": [
+   {
+    "id": "251:9843",
+    "duration": 4
+   }
+  ],
+  "animatedNodes": 5,
+  "svgLen": 46698,
+  "tagged": 19
+ }
+]
